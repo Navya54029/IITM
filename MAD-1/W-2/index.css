@@ -1,0 +1,21 @@
+a {
+	color: red;
+}
+span {
+	color: blue;
+}
+body {
+	background-color: #fdfdbb;
+}
+h1{
+		text-align: center;	
+}
+#footer {
+            position: absolute;
+            padding: 10px 10px 10px 10px;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+            height: 40px;
+          
+        }

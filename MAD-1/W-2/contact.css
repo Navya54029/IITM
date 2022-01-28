@@ -1,0 +1,17 @@
+a {
+    color: red;
+}
+body {
+    background-color: #fdfdbb;
+}
+span {
+    color: blue;
+}
+#footer {
+            position: absolute;
+            padding: 10px 10px 10px 10px;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+            height: 40px;
+        }

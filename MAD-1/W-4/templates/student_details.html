@@ -1,0 +1,37 @@
+<!DOCTYPE HTML>
+<HTML>
+<head>
+	<meta charset = "UTF-8"/>
+	<title>Student Data</title>
+	<style type="text/css">
+		.marks {
+  				text-align: center;
+  				}
+	</style>
+</head>
+<body>
+	<h1>Student Details</h1>
+	<table border="1px">
+		<thead>
+			<tr>
+				<th>Student id</th>
+				<th>Course id</th>
+				<th>Marks</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for student in student_data %}
+			<tr>
+				<td>{{ student['Student id'] }}</td>
+				<td>{{ student[' Course id'] }}</td>
+				<td>{{ student[' Marks'] }}</td>
+			</tr>
+			{% endfor %}
+			<tr>
+				<td class = "marks" colspan = "2">Total Marks</td>
+				<td colspan = "3">{{ total_marks }}</td>
+			</tr>
+		</tbody>
+	</table>
+</body>
+</HTML>
