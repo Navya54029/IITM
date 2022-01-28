@@ -7,7 +7,7 @@ from matplotlib.figure import Figure
 import sys
 import csv
 
-
+#comment
 #Read the data from csv file to student_data dictionary
 def read_csv(filename):
     with open(filename) as f:
