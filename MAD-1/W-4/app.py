@@ -93,7 +93,7 @@ def submit_form():
 			
 
 			#Render the template using Flask
-			#guided by Manideep Ladi
+			#guided by Manideep Ladi123
 
 			return render_template("course_details.html",avg_marks = avg_marks,max_marks= max_marks)
 		
