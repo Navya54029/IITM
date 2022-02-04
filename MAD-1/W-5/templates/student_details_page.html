@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Home</title>
+	<style type="text/css">
+		h1 {
+			margin-left: 20em;
+		}
+		table {
+
+			border-spacing: 10px;
+			margin-top: 40px;
+		}
+		th {
+			font-size: 20px;
+		}
+		
+	</style>
+</head>
+<body>
+	<h1>Student Details</h1>
+	<div>
+		<table id = "personal-details">
+		<tr>
+			<th>Roll Number</th>
+			<th>First Name</th>
+			<th>Last Name</th>
+		</tr>
+		<tr>
+			<td>{{ student_data.roll_number }}</td>
+			<td>{{ student_data.first_name }}</td>
+			<td>{{ student_data.last_name }}</td>
+		</tr>
+	</table>
+	</div>
+	
+	<h1>Enrollment List</h1>
+	<div>
+		<table id = "enroll-table">
+		<tr>
+			<th>S. No.</th>
+			<th>Course Code</th>
+			<th>Course Name</th>
+			<th>Course Description</th>
+		</tr>
+
+		{% for course in course_data %}
+		<tr>
+			<td>{{ loop.index }}</td>
+			<td>{{ course[0].course_code }}</td>
+			<td>{{ course[0].course_name }}</td>
+			<td>{{ course[0].course_description }}</td>
+		</tr>
+		{% endfor %}
+	</table>
+	</div>
+	<div>
+		<a href="/">Go Home</a>
+	</div>
+</body>
+</html>
