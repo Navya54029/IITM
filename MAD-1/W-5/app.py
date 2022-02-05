@@ -127,27 +127,38 @@ def updatestudent(student_id):
 		selected_student = [sel_stu.student_id,sel_stu.roll_number,sel_stu.first_name,sel_stu.last_name]
 		# print(selected_student)
 
-		return(render_template('updatestudent.html',student_data = selected_student))
+		sel_student_course_data = Enrollments.query.filter_by(estudent_id=student_id).all()
+		# print(sel_student_course_data)
+
+		list_courses_sel_data=[]
+		for course in sel_student_course_data:
+			list_courses_sel_data.append(course.ecourse_id)
+
+		# print(list_courses_sel_data)
+
+		return(render_template('updatestudent.html',student_data = selected_student,course_data1 = list_courses_sel_data))
 
 	if request.method == 'POST':
 
 		#Reading values from Add Student Form
-		r_no = request.form.get('current_roll')
-		f_name = request.form.get('current_f_name')
-		l_name = request.form.get('current_l_name')
+		r_no = request.form.get('roll')
+		f_name = request.form.get('f_name')
+		l_name = request.form.get('l_name')
 		courses = request.form.getlist('courses')
 
+
+		print(r_no,f_name,l_name,courses)
 		stmt4 = Student.query.filter_by(student_id=student_id).update(dict(first_name=f_name,last_name=l_name))
 		db.session.commit()
 
 		# list of courses selected in add student form
 		list_courses_sel = []
 		for course in courses:
-			if course == 'course_1':
+			if course == 'course_1' or course == 'course_11':
 				list_courses_sel.append(1)
-			elif course == 'course_2':
+			elif course == 'course_2' or course == 'course_22':
 				list_courses_sel.append(2)
-			elif course == 'course_3':
+			elif course == 'course_3' or course == 'course_33':
 				list_courses_sel.append(3)
 			else:
 				list_courses_sel.append(4)
@@ -160,6 +171,9 @@ def updatestudent(student_id):
 			enrollids.append(e.enrollment_id)
 		
 		# print(enrollids)
+
+		existing_courses = Enrollments.query.filter_by(estudent_id = student_id).delete()
+		# print(existing_courses)
 		
 		i = 0
 		
@@ -170,26 +184,14 @@ def updatestudent(student_id):
 
 		else: 
 			for c in list_courses_sel:
+				# Adding the stusent id and course id in enrollments table
+				newenroll = Enrollments(estudent_id = student_id, ecourse_id = c)
+				db.session.add(newenroll)
+				db.session.commit()
 
-				try:
-
-					updateenroll1 = Enrollments.query.filter_by(enrollment_id=enrollids[i]).update(dict(ecourse_id=c))
-					db.session.commit()
-					i = i + 1
-
-					# updateenroll1 = Enrollments.query.filter_by(enrollment_id=enrollids[i]).all()
-					# print(updateenroll1)
-
-				#If the student was enrolling for more than courses enrolled previously
-				except IndexError:
-
-						# Adding the stusent id and course id in enrollments table
-						newenroll = Enrollments(estudent_id = student_id, ecourse_id = c)
-						db.session.add(newenroll)
-						db.session.commit()
-
-		# Once updating the student to DB is successfull, this will render all the student details in home page
-		return redirect(url_for("students"))
+		students = Student.query.all()
+		#Returens list of students on Home page
+		return(render_template('index.html',students = students))
 
 
 
@@ -206,9 +208,10 @@ def deletestudent(student_id):
 		#Delete the corresponding enrollments
 		enroll_stmt = Enrollments.query.filter_by(estudent_id=student_id).delete()
 		db.session.commit()
-	# Once updating the student to DB is successfull, this will render all the student details in home page
-	return redirect(url_for("students"))
-
+		
+		students = Student.query.all()
+		#Returens list of students on Home page
+		return(render_template('index.html',students = students))
 		
 @app.route('/student/<int:student_id>')				
 

@@ -35,32 +35,54 @@
 	<form action="/student/{{ student_data[0] }}/update" method = "POST" id = "update-form" >
 		<div>
 			<label>Roll Number: </label>
-			<input type="text" name="current_roll" value = "{{ student_data[1] }}" disabled />
+			<input type="text" name="roll" value = "{{ student_data[1] }}" disabled />
 		</div>
 
 		<div>
 			<label>First Name: </label>
-			<input type="text" name="current_f_name" value="{{ student_data[2] }}" required />
+			<input type="text" name="f_name" value="{{ student_data[2] }}" required />
 		</div>
 
 		<div>
 			<label>Last Name: </label>
-			<input type="text" name="current_l_name" value="{{ student_data[3] }}" />
+			<input type="text" name="l_name" value="{{ student_data[3] }}" />
 		</div>		
 		<div>
 			<label>Select Courses: </label>
-			<input type="checkbox" name="courses" value="course_1">
-			<label>MAD I</label>
-			<input type="checkbox" name="courses" value="course_2">
-			<label>DBMS</label>
-			<input type="checkbox" name="courses" value="course_3">
-			<label>PDSA</label>
-			<input type="checkbox" name="courses" value="course_4">
-			<label>BDM</label>
+
+				{% if 1 in course_data1 %}
+					<input type="checkbox" name="courses" value="course_1" checked>
+					<label>MAD I</label>
+				{% else %}
+					<input type="checkbox" name="courses" value="course_1">
+					<label>MAD I</label>
+				{% endif %}
+				{% if 2 in course_data1 %}
+					<input type="checkbox" name="courses" value="course_2" checked>
+					<label>DBMS</label>
+				{% else %}
+					<input type="checkbox" name="courses" value="course_2">
+					<label>DBMS</label>
+				{% endif %}
+				{% if 3 in course_data1 %}
+					<input type="checkbox" name="courses" value="course_3" checked>
+					<label>PDSA</label>
+				{% else %}
+					<input type="checkbox" name="courses" value="course_3">
+					<label>PDSA</label>
+				{% endif %}
+				{% if 4 in course_data1 %}
+					<input type="checkbox" name="courses" value="course_4" checked>
+					<label>BDM</label>
+				{% else %}
+					<input type="checkbox" name="courses" value="course_4">
+					<label>BDM</label>
+				{% endif %}
+
 		</div>
 		
 		<div>
-			<input type="submit" name="Go" value = "Submit" />
+			<input type="submit" value = "Submit" />
 		</div>
 	</form>
 </body>
