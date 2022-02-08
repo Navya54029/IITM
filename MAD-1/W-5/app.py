@@ -114,7 +114,10 @@ def addstudentdetails():
 				db.session.commit()
 
 			# Once adding the student to DB is successfull, this will render all the student details in home page
-			return redirect(url_for("students"))
+			students = Student.query.all()
+			#Returens list of students on Home page
+			return(render_template('index.html',students = students))
+
 
 
 @app.route('/student/<int:student_id>/update', methods=['GET', 'POST'])
@@ -147,47 +150,58 @@ def updatestudent(student_id):
 		courses = request.form.getlist('courses')
 
 
-		print(r_no,f_name,l_name,courses)
+		# print(r_no,f_name,l_name,courses)
 		stmt4 = Student.query.filter_by(student_id=student_id).update(dict(first_name=f_name,last_name=l_name))
 		db.session.commit()
 
 		# list of courses selected in add student form
 		list_courses_sel = []
 		for course in courses:
-			if course == 'course_1' or course == 'course_11':
+			if course == 'course_1':
 				list_courses_sel.append(1)
-			elif course == 'course_2' or course == 'course_22':
+			elif course == 'course_2':
 				list_courses_sel.append(2)
-			elif course == 'course_3' or course == 'course_33':
+			elif course == 'course_3':
 				list_courses_sel.append(3)
 			else:
 				list_courses_sel.append(4)
-		# print(list_courses_sel)
+		
 		
 		enrolidstmt1 = Enrollments.query.filter_by(estudent_id=student_id).all()
 		# print(enrolidstmt1)
 		enrollids= []
+		previously_sel_courses = []
+
 		for e in enrolidstmt1:
 			enrollids.append(e.enrollment_id)
+			previously_sel_courses.append(e.ecourse_id)
 		
-		# print(enrollids)
+		# print(previously_sel_courses)
+		# print(list_courses_sel)
 
-		existing_courses = Enrollments.query.filter_by(estudent_id = student_id).delete()
-		# print(existing_courses)
-		
-		i = 0
-		
-		if len(courses) == 0:
-			#Delete the corresponding enrollments
-			enroll_stmt = Enrollments.query.filter_by(estudent_id=student_id).delete()
-			db.session.commit()
+		list_courses = Course.query.all()
+		# print(list_courses)
 
-		else: 
-			for c in list_courses_sel:
-				# Adding the stusent id and course id in enrollments table
+		list_courses_ids = []
+		for c in list_courses:
+			list_courses_ids.append(c.course_id)
+
+		# print(list_courses_ids)
+		
+		for c in list_courses_ids:
+			if c in list_courses_sel:
+				db.session.commit()
+
+			if c in previously_sel_courses and c not in list_courses_sel:
+				enroll_stmt = Enrollments.query.filter_by(estudent_id=student_id,ecourse_id=c).delete()
+				print(enroll_stmt)
+				db.session.commit()
+
+			if c in list_courses_sel and c not in previously_sel_courses:
 				newenroll = Enrollments(estudent_id = student_id, ecourse_id = c)
 				db.session.add(newenroll)
 				db.session.commit()
+
 
 		students = Student.query.all()
 		#Returens list of students on Home page
@@ -236,7 +250,8 @@ def display_details(student_id):
 
 if __name__ == '__main__':
 	#Run the flask app
-	app.run()
+
+	app.run(debug = True)
 
 
 
