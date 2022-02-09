@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Add Student</title>
+	<style type="text/css">
+		#create-form {
+			padding-bottom: 10px;
+			margin-top: 30px;
+		}
+		label {
+			margin-right: 0px;
+			font-size: 20px;
+		}
+		div {
+			margin-top: 40px;
+		}
+		input[type=text] {
+			width: 20%;
+			background-color: aliceblue;
+			border: 1px solid;
+			border-radius: 4px;
+			height: 23px;
+			border-color: black;
+		}
+		input[type=submit] {
+			padding: 5px 10px;
+			font-size: 15px;
+		}
+	</style>
+</head>
+<body action="/student/create">
+	<h1>Add a Student</h1>
+	<form action="/student/create" method = "POST" id = "create-form" >
+		<div>
+			<label>Roll Number: </label>
+			<input type="text" name="roll" required />
+		</div>
+
+		<div>
+			<label>First Name: </label>
+			<input type="text" name="f_name" required />
+		</div>
+
+		<div>
+			<label>Last Name: </label>
+			<input type="text" name="l_name" />
+		</div>		
+
+		<div>
+			<label>Select Courses: </label>
+			<input type="checkbox" name="courses" value="course_1">
+			<label>MAD I</label>
+			<input type="checkbox" name="courses" value="course_2">
+			<label>DBMS</label>
+			<input type="checkbox" name="courses" value="course_3">
+			<label>PDSA</label>
+			<input type="checkbox" name="courses" value="course_4">
+			<label>BDM</label>
+		</div>
+		
+		<div>
+			<input type="submit" name="Go" value = "Submit" />
+		</div>
+	</form>
+</body>
+</html>

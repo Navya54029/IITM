@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Update Student</title>
+	<style type="text/css">
+		#update-form {
+			padding-bottom: 10px;
+			margin-top: 30px;
+		}
+		label {
+			margin-right: 0px;
+			font-size: 20px;
+		}
+		div {
+			margin-top: 40px;
+		}
+		input[type=text] {
+			width: 20%;
+			background-color: aliceblue;
+			border: 1px solid;
+			border-radius: 4px;
+			height: 23px;
+			border-color: black;
+		}
+		input[type=submit] {
+			padding: 5px 10px;
+			font-size: 15px;
+		}
+	</style>
+</head>
+<body>
+	<h1>Update Student</h1>
+	<form action="/student/{{ student_data[0] }}/update" method = "POST" id = "update-form" >
+		<div>
+			<label>Roll Number: </label>
+			<input type="text" name="roll" value = "{{ student_data[1] }}" disabled />
+		</div>
+
+		<div>
+			<label>First Name: </label>
+			<input type="text" name="f_name" value="{{ student_data[2] }}" required />
+		</div>
+
+		<div>
+			<label>Last Name: </label>
+			<input type="text" name="l_name" value="{{ student_data[3] }}" />
+		</div>		
+		<div>
+			<label>Select Courses: </label>
+
+				{% if 1 in course_data1 %}
+					<input type="checkbox" name="courses" value="course_1" checked>
+					<label>MAD I</label>
+				{% else %}
+					<input type="checkbox" name="courses" value="course_1">
+					<label>MAD I</label>
+				{% endif %}
+				{% if 2 in course_data1 %}
+					<input type="checkbox" name="courses" value="course_2" checked>
+					<label>DBMS</label>
+				{% else %}
+					<input type="checkbox" name="courses" value="course_2">
+					<label>DBMS</label>
+				{% endif %}
+				{% if 3 in course_data1 %}
+					<input type="checkbox" name="courses" value="course_3" checked>
+					<label>PDSA</label>
+				{% else %}
+					<input type="checkbox" name="courses" value="course_3">
+					<label>PDSA</label>
+				{% endif %}
+				{% if 4 in course_data1 %}
+					<input type="checkbox" name="courses" value="course_4" checked>
+					<label>BDM</label>
+				{% else %}
+					<input type="checkbox" name="courses" value="course_4">
+					<label>BDM</label>
+				{% endif %}
+
+		</div>
+		
+		<div>
+			<input type="submit" value = "Submit" />
+		</div>
+	</form>
+</body>
+</html>
