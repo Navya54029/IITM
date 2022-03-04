@@ -1,0 +1,39 @@
+#logout {
+    color: cornsilk;
+}
+#profile {
+    padding-right: 0.5rem;
+    padding-left: 60rem;
+    margin-right: 0.5rem;
+    color: cornsilk;
+}
+#dashboard {
+    padding-right: 0.5rem;
+    padding-left: 60rem;
+    margin-right: 0.5rem;
+    color: cornsilk;
+}
+#user {
+    margin-left: 50px;
+    display: flex;
+}
+#customtable {
+    border: 1px solid !important;
+}
+.button {
+    border-radius: 8px;
+    background-color: #01A88A; /* Green */
+    border: none;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 10px 2px;
+    cursor: pointer;
+}
+.button:hover {
+    background-color: #01A88A;
+    color: white;
+  }
