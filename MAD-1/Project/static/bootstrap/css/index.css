@@ -1,0 +1,38 @@
+#app_name {
+    color: #01A88A;
+    font-family: "Raleway";
+    font-size: 1.6em;
+    font-weight: bold;
+    align-items: center; 
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
+#login {
+    padding-right: 0.5rem;
+    padding-left: 55.5rem;
+    color: cornsilk;
+}
+#signup {
+    padding-right: 0.5rem;
+    padding-left: 1rem;
+    margin-right: 0.5rem;
+    color: cornsilk;
+}
+#contact {
+    color: cornsilk;
+}
+footer {
+    background-color: #212529;
+    color: cornsilk;
+    text-align: center;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+}
+#spanfooter {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+}

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Tracker</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/login.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/dashboard.css') }}">
+
+</head>
+<body style="width:100%">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light" style="background-color: #212529 !important" style="width:100%">
+      <a class="navbar-brand" href="#"><img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo" style="width:60px;" class="rounded-pill"></a>
+      <label id="app_name">Quantified Self</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav" style="text-align: left;">
+          <a class="nav-item nav-link active" style="color: cornsilk; margin-left: 55rem;" href="/dashboard/{{ user_id }}">Dashboard<span class="sr-only"></span></a>
+          <a class="nav-item nav-link" style="color: cornsilk" href="/profile/{{ user_id }}">My Profile</a>
+          <a class="nav-item nav-link" style="color: cornsilk" href="/logout/{{ user_id }}">Logout</a>
+        </div>
+      </div>
+    </nav>
+      <div id="user" class="row" class="container">
+        <h3></h3>
+        <h4 style="text-align: center; padding-top: 50px;">List of Logs</h4>
+      </div>
+          <div class="col-sm">
+            <b style="text-align: left;">Last Reviewed : {{ last_tracked }}</b>
+          </div>
+        <form action="/dashboard/{{ user_id }}" method="POST">
+        <div class="container">
+        <table class="table table-striped" id="customtable">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Date</th>
+              <th scope="col">Value</th>
+              <th scope="col">Notes</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="tablebody">
+            {% for log in log_data %}
+            <tr>
+              <th scope="row">{{ loop.index }}</th>
+              <td><a href="/">{{ log_data[loop.index-1]['log_time'] }}</a></td>
+              <td>{{ log_data[loop.index-1]['value'] }}</td>
+              <td>{{ log_data[loop.index-1]['notes'] }}</td>
+              <td><a href="/updatelog/{{ user_id }}/{{ tracker_id }}/{{ log_data[loop.index-1]['log_id'] }}">Edit</a>&nbsp;&nbsp;&nbsp;<a href="/deletelog/{{ user_id }}/{{ tracker_id }}/{{ log_data[loop.index-1]['log_id'] }}">Delete</a></td>
+            {% endfor %}
+          </tbody>
+        </table>
+      </form>
+        <a class="button" href="/logevent/{{ user_id }}/{{ tracker_id }}" role="button">Log a new event</a>
+    </div>
+
+      <span id="spanfooter">
+        <footer>
+            &copy; Quantified Self, 2022
+          </footer>
+      </span>
+</body>
+</html>

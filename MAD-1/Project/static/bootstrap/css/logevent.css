@@ -1,0 +1,52 @@
+.heading {
+    height: 80px;
+    width: 50%;
+    padding-top: 15px;
+    padding-left: 20px;
+    font-family: Raleway;
+    font-weight: bold;
+    align-content: center;
+  }
+
+.button {
+    border-radius: 8px;
+    background-color: #01A88A; /* Green */
+    border: none;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 10px 2px;
+    cursor: pointer;
+}
+.button:hover {
+    background-color: #01A88A;
+    color: white;
+  }
+
+#addtracker {
+    height: 80px;
+    width: 50%;
+    padding-top: 15px;
+    padding-left: 40px;
+    font-family: Raleway;
+    font-weight: bold;
+    align-content: center;
+}
+label {
+    padding-right: 10px;
+}
+.form-control, .form-select{
+    width: 50%;
+}
+.form-group {
+    padding-top: 15px;
+    padding-left: 40px;
+    font-weight: bold;
+    font-family: Raleway;
+}
+#createbtn {
+    padding-left: 320px;
+}
