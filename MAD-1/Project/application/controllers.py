@@ -2,6 +2,7 @@ from ast import Return
 from calendar import month
 from crypt import methods
 from multiprocessing import Value
+from turtle import color
 from flask import Flask, redirect, request,url_for
 from flask import render_template
 from flask import current_app as app
@@ -117,8 +118,10 @@ def addtracker(user_id):
             "name" : request.form.get("tname"),
             "description" : request.form.get("desc"),
             "tracker_type" : request.form.get("tracker_type"),
+            "chart_type" : request.form.get("chart_type"),
             "settings" : request.form.get("settings")
         }
+        # print(add_dict)
         response = requests.post(f"http://127.0.0.1:5000/v1/api/addtracker/{user_id}", data=add_dict)
         print(response)
         return redirect(url_for("dashboard",user_id=user_id))
@@ -132,6 +135,7 @@ def updatetracker(user_id,tracker_id):
         add_dict = {
             "name" : request.form.get("tname"),
             "description" : request.form.get("desc"),
+            "chart_type" : request.form.get("chart_type"),
             "settings" : request.form.get("settings")
         }
         response = requests.put(f"http://127.0.0.1:5000/v1/api/updatetracker/{user_id}/{tracker_id}", data=add_dict)
@@ -164,6 +168,7 @@ def logevent(user_id,tracker_id):
                 "notes" : request.form.get("notes")
             }
         
+        add_log_dict["log_time"]=datetime.strptime(add_log_dict["log_time"], '%Y-%m-%dT%H:%M')
         response= requests.post(f"http://127.0.0.1:5000/v1/api/loganewevent/{user_id}/{tracker_id}",data=add_log_dict)
         return redirect(url_for("viewtracker",user_id=user_id,tracker_id=tracker_id))
 
@@ -199,35 +204,62 @@ def viewtracker(user_id,tracker_id):
     response=requests.get(f"http://127.0.0.1:5000/v1/api/log_data/{user_id}/{tracker_id}")
     log_data=json.loads(response.text)
     last_tracked = Logs.query.order_by(desc('modified_date')).first()
-    print(last_tracked.modified_date)
+    # print(last_tracked.modified_date)
     # print(log_data)
-    # log_date=[]
-    # date_dict={}
-    # for log in log_data:
-    #     log_date.append(log["log_time"].split("-")[0])
-    #     log_date.append(log["log_time"].split("-")[1])
-    #     log_date.append(log["log_time"].split("-")[2].split("T")[0])
-    #     log_date.append(log["log_time"].split("-")[2].split("T")[1].split(":")[0])
-    #     log_date.append(log["log_time"].split("-")[2].split("T")[1].split(":")[1])
-        
-    # print(log_date)   
+    tracker_data = Tracker.query.filter_by(tracker_id=tracker_id).first()
+    print(tracker_data.type)
+    x=[]
+    y=[]
+    if tracker_data.type == 'Timestamp':
+        for log in log_data:
+            x.append(log["log_time"])
+            y.append(int(log["value"]))
+        plt.switch_backend('Agg') 
+        plt.figure(figsize=(10, 6))
+        plt.tight_layout()
 
-    # for i in range(len(log_data)):
-    #     date_dict[i] = datetime(log["log_time"].split("-")[0],log["log_time"].split("-")[1],log["log_time"].split("-")[2].split("T")[0],log["log_time"].split("-")[2].split("T")[1].split(":")[0],log["log_time"].split("-")[2].split("T")[1].split(":")[1])
-    # print(date_dict)
-    log_date={}
-    for log in log_data:
-        log_date[log["log_time"]] = datetime(int(log["log_time"].split("-")[0]),int(log["log_time"].split("-")[1]),int(log["log_time"].split("-")[2].split("T")[0]),int(log["log_time"].split("-")[2].split("T")[1].split(":")[0]),int(log["log_time"].split("-")[2].split("T")[1].split(":")[1]))
-  
-    # dict_date={}
-    # for d in log_date:
-    #     dict_date[log_date["log_time"]] = log_date["value"]
+        if tracker_data.chart_type == 'bar':
+            plt.title("Barchart of your logs")
+            plt.bar(x,height=y,color='mediumaquamarine',width=0.5)
+        else:
+            plt.title("Trendline of your logs")
+            plt.plot(x,y,c='mediumaquamarine',linewidth = '5.5',marker = 'o')
+            
+        plt.xlabel('Timestamp')
+        plt.ylabel('Values')
+        plt.xticks(x, rotation=12)
+        plt.savefig('static/img/logplot.png',dpi=70,bbox_inches="tight")
+        plt.clf()    
 
-    # print(dict_date)
-#  .strptime("%Y-%m-%d %H:%M:%S")
-    return render_template("tracker.html",user_id=user_id,log_data=log_data,tracker_id=tracker_id,last_tracked=last_tracked.modified_date)
+    if tracker_data.type == 'Numeric':
+        for log in log_data:
+            x.append(log["notes"])
+            y.append(int(log["value"]))
+        print(x,y)
+        print(set(x))
+        dict_data ={}
+        for x in set(x):
+            dict_data[x] = 0
+        print(dict_data)
+        plt.switch_backend('Agg') 
+        plt.figure(figsize=(10, 6))
+        plt.tight_layout()
 
-    
+        if tracker_data.chart_type == 'bar':
+            plt.title("Barchart of your logs")
+            plt.bar(x,height=y,color='mediumaquamarine',width=0.5)
+        else:
+            plt.title("Trendline of your logs")
+            plt.plot(x,y,c='mediumaquamarine',linewidth = '5.5',marker = 'o')
+            
+        plt.xlabel('notes')
+        plt.ylabel('Values')
+        plt.xticks(x, rotation=12)
+        plt.savefig('static/img/logplot.png',dpi=70,bbox_inches="tight")
+        plt.clf()  
+
+    return render_template("tracker.html",user_id=user_id,log_data=log_data,tracker_id=tracker_id,last_tracked=last_tracked.modified_date,tracker_data=tracker_data)
+
 
 
 

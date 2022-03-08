@@ -21,6 +21,7 @@ class Tracker(db.Model):
     description = db.Column(db.String, nullable = False)
     type = db.Column(db.String, nullable = False)
     settings = db.Column(db.String)
+    chart_type = db.Column(db.String)
     created_date = db.Column(db.String)
     modified_date = db.Column(db.String)
     user_id = db.Column(db.Integer,   db.ForeignKey("user_master.user_id"), primary_key=True, nullable=False)

@@ -39,7 +39,7 @@ label {
     padding-right: 10px;
 }
 .form-control, .form-select{
-    width: 50%;
+    width: 40%;
 }
 .form-group {
     padding-top: 15px;
@@ -50,3 +50,4 @@ label {
 #createbtn {
     padding-left: 320px;
 }
+

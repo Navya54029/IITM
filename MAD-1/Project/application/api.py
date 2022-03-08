@@ -44,34 +44,25 @@ user_dashboard_output_fields = {
 }
 
 #Defining output fields using marshal_with
-add_tacker_output_fields = {
-	"user_id" : fields.Integer,
-	"name" : fields.String,
-	"type" : fields.String,
-	"description" : fields.String,
-    "created_date" : fields.String,
-    "modified_date" : fields.String,
-    "settings" : fields.String
-}
-
-#Defining output fields using marshal_with
-update_tacker_output_fields = {
+update_tracker_output_fields = {
 	"user_id" : fields.Integer,
     "tracker_id" : fields.Integer,
 	"name" : fields.String,
 	"type" : fields.String,
 	"description" : fields.String,
+    "chart_type" : fields.String,
     "settings" : fields.String,
     "modified_date" : fields.String
 }
 
 #Defining output fields using marshal_with
-get_tracker_output_fields = {
+tracker_output_fields = {
     "user_id" : fields.Integer,
     "tracker_id" : fields.Integer,
 	"name" : fields.String,
 	"type" : fields.String,
 	"description" : fields.String,
+    "chart_type" : fields.String,
     "created_date" : fields.String,
     "settings" : fields.String,
     "modified_date" : fields.String
@@ -95,6 +86,7 @@ create_tracker_parser = reqparse.RequestParser()
 create_tracker_parser.add_argument('name')
 create_tracker_parser.add_argument('description')
 create_tracker_parser.add_argument('tracker_type',type=str)
+create_tracker_parser.add_argument('chart_type',type=str)
 create_tracker_parser.add_argument('settings',type=str)
 
 #To read values from create log request Body
@@ -172,13 +164,13 @@ class DASHBOARDAPI(Resource):
 
 
 class TRACKERAPI(Resource):
-    @marshal_with(get_tracker_output_fields)
+    @marshal_with(tracker_output_fields)
     def get(self,user_id):
         user_tracker_details = Tracker.query.filter_by(user_id=user_id).all()
         print(user_tracker_details)
         return user_tracker_details,200
 
-    @marshal_with(add_tacker_output_fields)
+    @marshal_with(tracker_output_fields)
     def post(self,user_id):
         print("Inside Post")
         args = create_tracker_parser.parse_args()
@@ -187,16 +179,17 @@ class TRACKERAPI(Resource):
             "tname" : args.get("name",None),
             "desc" : args.get("description",None),
             "tracker_type" : args.get("tracker_type",None),
+            "chart_type" : args.get("chart_type", None),
             "settings" : args.get("settings",None)
         }
         created_date=datetime.datetime.now()
-        newtracker= Tracker(name=add_dict["tname"],description=add_dict["desc"],type=add_dict["tracker_type"],created_date=created_date,user_id=user_id,settings=add_dict["settings"])
+        newtracker= Tracker(name=add_dict["tname"],description=add_dict["desc"],type=add_dict["tracker_type"],created_date=created_date,user_id=user_id,settings=add_dict["settings"],chart_type=add_dict["chart_type"])
         db.session.add(newtracker)
         db.session.commit()
         
         return newtracker,200
 
-    @marshal_with(update_tacker_output_fields)
+    @marshal_with(update_tracker_output_fields)
     def put(self,tracker_id,user_id):
         print("Inside PUT")
         print(user_id,tracker_id)
@@ -205,6 +198,7 @@ class TRACKERAPI(Resource):
         updatetracker.name=args.get("name",None)
         updatetracker.description=args.get("description",None)
         updatetracker.settings=args.get("settings",None)
+        updatetracker.chart_type =args.get("chart_type", None)
         updatetracker.modified_date=datetime.datetime.now()
         db.session.commit()
         print(updatetracker)

@@ -22,7 +22,7 @@
         </div>
       </div>
     </nav>
-      <div class="heading">
+      <div class="heading" style="height: auto;">
           <h3>Update tracker</h3>
         </div>
       </div class="container">
@@ -33,7 +33,7 @@
             </div>
             <div class="form-group">
             <label for="desc">Description: </label>
-            <textarea class="form-control" id="FormControlTextarea1" rows="5" name="desc" placeholder="Enter text here..." value="{{ tracker_data['description'] }}">{{ tracker_data['description'] }}</textarea>
+            <textarea class="form-control" id="FormControlTextarea1" rows="4" name="desc" placeholder="Enter text here..." value="{{ tracker_data['description'] }}">{{ tracker_data['description'] }}</textarea>
             </div>
             <div class="form-group">
                 <label for="tracker_type" disabled>Tracker Type: </label>
@@ -41,6 +41,13 @@
                     <option>{{ tracker_data['type'] }}</option>
                 </select>
             </div>
+            <div class="form-group">
+              <label for="chart_type">Chart Type: </label>
+              <select class="form-select" id="FormControlSelect1" name="chart_type" id="tracker_option" required>
+                  <option value="plot">Plot</option>
+                  <option value="bar">Bar Chart</option>
+              </select>
+          </div>
             <div class="form-group">
                 <label for="desc">Settings: </label>
                 <input type="text" class="form-control" id="FormControlInput1" name="settings" placeholder="Enter settings" value="{{ tracker_data['settings'] }}">
