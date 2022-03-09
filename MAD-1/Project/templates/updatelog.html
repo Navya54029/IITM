@@ -32,13 +32,26 @@
           <label for="tname">Date: </label>
           <input type="datetime-local" name="ltime" class="form-control" id="FormControlInput1" required value="{{ log_data['log_time'] }}">
           </div>
-          <div class="form-group">
-          <label for="desc">Value: </label>
-          <input type="text" class="form-control" id="FormControlTextarea1" name="lvalue" placeholder="Enter value here..." value="{{ log_data['value'] }}">
+          {% if tracker_data['type'] == 'MultipleChoice' %}
+            <div class="form-group">
+              <label for="multiple_type">Select your choice: </label>
+              <select class="form-select" id="FormControlSelect1" name="multiple_type" id="tracker_option" required>
+                  {% for data in multiple_data %}
+                  <option value="{{ data }}">{{ data }}</option>
+                  {% endfor %}
+               </select>
           </div>
+          {% else %}
+
           <div class="form-group">
               <label for="desc">Notes: </label>
-              <input type="text" class="form-control" id="FormControlInput1" name="notes" placeholder="Enter notes here..." value="{{ log_data['notes'] }}">
+              <input type="text" class="form-control" id="FormControlInput1" name="notes" placeholder="Enter notes here...">
+          </div>
+
+          {% endif %}
+          <div class="form-group">
+            <label for="desc">Value: </label>
+            <input type="text" class="form-control" id="FormControlTextarea1" name="lvalue" placeholder="Enter value here...">
           </div>
           <div id="createbtn">
               <button class="button" type="submit">Update Log</button>

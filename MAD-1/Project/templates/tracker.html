@@ -48,7 +48,11 @@
               <th scope="col">#</th>
               <th scope="col">Date</th>
               <th scope="col">Value</th>
+              {% if tracker_data['type'] == 'MultipleChoice' %}
+              <th scope="col">Choice</th>
+              {% else %}
               <th scope="col">Notes</th>
+              {% endif %}
               <th scope="col">Actions</th>
             </tr>
           </thead>
@@ -58,7 +62,11 @@
               <th scope="row">{{ loop.index }}</th>
               <td><a href="/">{{ log_data[loop.index-1]['log_time'] }}</a></td>
               <td>{{ log_data[loop.index-1]['value'] }}</td>
+              {% if log_data[loop.index-1]['notes'] == None %}
+              <td>{{ log_data[loop.index-1]['selected_choice'] }}</td>
+              {% else %}
               <td>{{ log_data[loop.index-1]['notes'] }}</td>
+              {% endif %}
               <td><a href="/updatelog/{{ user_id }}/{{ tracker_id }}/{{ log_data[loop.index-1]['log_id'] }}">Edit</a>&nbsp;&nbsp;&nbsp;<a href="/deletelog/{{ user_id }}/{{ tracker_id }}/{{ log_data[loop.index-1]['log_id'] }}">Delete</a></td>
             {% endfor %}
           </tbody>

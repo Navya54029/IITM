@@ -165,14 +165,20 @@ def logevent(user_id,tracker_id):
         add_log_dict = {
                 "log_time" : request.form.get("ltime"),
                 "value" : request.form.get("lvalue"),
-                "notes" : request.form.get("notes")
+                "notes" : request.form.get("notes"),
+                "selected_choice" : request.form.get("multiple_type")
             }
-        
+        # print(add_log_dict)
         add_log_dict["log_time"]=datetime.strptime(add_log_dict["log_time"], '%Y-%m-%dT%H:%M')
         response= requests.post(f"http://127.0.0.1:5000/v1/api/loganewevent/{user_id}/{tracker_id}",data=add_log_dict)
         return redirect(url_for("viewtracker",user_id=user_id,tracker_id=tracker_id))
-
-    return render_template("logevent.html",user_id=user_id,tracker_id=tracker_id)
+    tracker_data = Tracker.query.filter_by(tracker_id=tracker_id).first()
+    print(tracker_data.type)
+    multiple_data=[]
+    for d in tracker_data.settings.split(","):
+        multiple_data.append(d)
+    
+    return render_template("logevent.html",user_id=user_id,tracker_id=tracker_id,multiple_data=multiple_data,tracker_data=tracker_data)
 
 @app.route(("/updatelog/<int:user_id>/<int:tracker_id>/<int:log_id>"), methods=['GET', 'POST'])
 def updatelog(user_id,tracker_id,log_id):
@@ -180,16 +186,23 @@ def updatelog(user_id,tracker_id,log_id):
     update_dict = {
         "log_time" : request.form.get("ltime"),
         "value" : request.form.get("lvalue"),
-        "notes" : request.form.get("notes")
+        "notes" : request.form.get("notes"),
+        "selected_choice" : request.form.get("multiple_type")
     }
     # print(update_dict)
     if request.method == "POST":
         response = requests.put(f"http://127.0.0.1:5000/v1/api/update_log_data/{user_id}/{tracker_id}/{log_id}",data=update_dict)
+        print(response.text)
         return redirect(url_for("viewtracker",user_id=user_id,tracker_id=tracker_id))
         
     response=requests.get(f"http://127.0.0.1:5000/v1/api/update_log_data/{user_id}/{tracker_id}/{log_id}")
     update_log_data=json.loads(response.text)
-    return render_template("updatelog.html",log_data=update_log_data,user_id=user_id,tracker_id=tracker_id,log_id=log_id)
+    tracker_data = Tracker.query.filter_by(tracker_id=tracker_id).first()
+    print(tracker_data.type)
+    multiple_data=[]
+    for d in tracker_data.settings.split(","):
+        multiple_data.append(d)
+    return render_template("updatelog.html",log_data=update_log_data,user_id=user_id,tracker_id=tracker_id,log_id=log_id,tracker_data=tracker_data,multiple_data=multiple_data)
 
 
 @app.route(("/deletelog/<int:user_id>/<int:tracker_id>/<int:log_id>"), methods=['GET', 'POST'])
@@ -213,50 +226,40 @@ def viewtracker(user_id,tracker_id):
     if tracker_data.type == 'Timestamp':
         for log in log_data:
             x.append(log["log_time"])
-            y.append(int(log["value"]))
-        plt.switch_backend('Agg') 
-        plt.figure(figsize=(10, 6))
-        plt.tight_layout()
-
-        if tracker_data.chart_type == 'bar':
-            plt.title("Barchart of your logs")
-            plt.bar(x,height=y,color='mediumaquamarine',width=0.5)
-        else:
-            plt.title("Trendline of your logs")
-            plt.plot(x,y,c='mediumaquamarine',linewidth = '5.5',marker = 'o')
-            
-        plt.xlabel('Timestamp')
-        plt.ylabel('Values')
-        plt.xticks(x, rotation=12)
-        plt.savefig('static/img/logplot.png',dpi=70,bbox_inches="tight")
-        plt.clf()    
-
+            y.append(int(log["value"]))   
+    dict_data={}
+    tuple_data=[]
     if tracker_data.type == 'Numeric':
         for log in log_data:
             x.append(log["notes"])
-            y.append(int(log["value"]))
-        print(x,y)
-        print(set(x))
-        dict_data ={}
-        for x in set(x):
-            dict_data[x] = 0
-        print(dict_data)
-        plt.switch_backend('Agg') 
-        plt.figure(figsize=(10, 6))
-        plt.tight_layout()
+            y.append(int(log["value"])) 
+        
+        tuple_data = list(zip(x, y))
+        
+        for data in tuple_data:
+            if data[0] in dict_data.keys():
+                dict_data[data[0]]+=data[1]
+            else:
+                dict_data[data[0]]=data[1]
+        print(dict_data) 
+        x=[key for key in dict_data.keys()]
+        y=[val for val in dict_data.values()]
+    plt.switch_backend('Agg') 
+    plt.figure(figsize=(10, 6))
+    plt.tight_layout()
 
-        if tracker_data.chart_type == 'bar':
-            plt.title("Barchart of your logs")
-            plt.bar(x,height=y,color='mediumaquamarine',width=0.5)
-        else:
-            plt.title("Trendline of your logs")
-            plt.plot(x,y,c='mediumaquamarine',linewidth = '5.5',marker = 'o')
-            
-        plt.xlabel('notes')
-        plt.ylabel('Values')
-        plt.xticks(x, rotation=12)
-        plt.savefig('static/img/logplot.png',dpi=70,bbox_inches="tight")
-        plt.clf()  
+    if tracker_data.chart_type == 'bar':
+        plt.title("Barchart of your logs")
+        plt.bar(x,height=y,color='mediumaquamarine',width=0.3)
+    else:
+        plt.title("Trendline of your logs")
+        plt.plot(x,y,c='mediumaquamarine',linewidth = '5.5',marker = 'o')
+        
+    plt.xlabel('Notes')
+    plt.ylabel('Values')
+    plt.xticks(x, rotation=12)
+    plt.savefig('static/img/logplot.png',dpi=70,bbox_inches="tight")
+    plt.clf()  
 
     return render_template("tracker.html",user_id=user_id,log_data=log_data,tracker_id=tracker_id,last_tracked=last_tracked.modified_date,tracker_data=tracker_data)
 

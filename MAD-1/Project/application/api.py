@@ -75,6 +75,7 @@ add_log_output_fields = {
     "log_time" : fields.String,
     "value" : fields.String,
     "notes" : fields.String,
+    "selected_choice" : fields.String,
     "created_date" : fields.String,
     "modified_date" : fields.String
 }
@@ -94,6 +95,7 @@ create_log_parser = reqparse.RequestParser()
 create_log_parser.add_argument('log_time')
 create_log_parser.add_argument('value')
 create_log_parser.add_argument('notes',type=str)
+create_log_parser.add_argument('selected_choice',type=str)
 
 #Define UserCreate API
 
@@ -182,6 +184,7 @@ class TRACKERAPI(Resource):
             "chart_type" : args.get("chart_type", None),
             "settings" : args.get("settings",None)
         }
+
         created_date=datetime.datetime.now()
         newtracker= Tracker(name=add_dict["tname"],description=add_dict["desc"],type=add_dict["tracker_type"],created_date=created_date,user_id=user_id,settings=add_dict["settings"],chart_type=add_dict["chart_type"])
         db.session.add(newtracker)
@@ -228,7 +231,7 @@ class LOGAPI(Resource):
         print(user_id,tracker_id)
         args = create_log_parser.parse_args()
         created_date=datetime.datetime.now()
-        newlog = Logs(log_time= args.get("log_time",None),value= args.get("value",None),notes= args.get("notes",None),user_id=user_id,tracker_id=tracker_id,created_date=created_date)
+        newlog = Logs(log_time= args.get("log_time",None),value= args.get("value",None),notes= args.get("notes",None),user_id=user_id,tracker_id=tracker_id,created_date=created_date,selected_choice = args.get("selected_choice"))
         db.session.add(newlog)
         db.session.commit()
         return newlog,200
@@ -259,6 +262,7 @@ class UPDATEGETAPI(Resource):
         updatelog.log_time=args.get("log_time",None)
         updatelog.value=args.get("value",None)
         updatelog.notes=args.get("notes",None)
+        updatelog.selected_choice=args.get("selected_choice",None)
         updatelog.modified_date=datetime.datetime.now()
         db.session.commit()
         # print(updatelog)
