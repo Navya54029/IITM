@@ -18,7 +18,7 @@ input[type=text],input[type=password], select, textarea {
     resize: vertical /* Allow the user to vertically resize the textarea (not horizontally) */
 }
 
-button {
+#button {
     border-radius: 8px;
     background-color: #01A88A; /* Green */
     border: none;
@@ -30,4 +30,21 @@ button {
     font-size: 16px;
     margin: 10px 2px;
    cursor: pointer;
+}
+.button, #drop {
+    border-radius: 8px;
+    background-color: #01A88A; /* Green */
+    border: none;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 10px 2px;
+    cursor: pointer;
+}
+.button:hover, #drop:hover {
+    background-color: #01A88A;
+    color: white;
 }

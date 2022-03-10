@@ -35,7 +35,7 @@
           {% if tracker_data['type'] == 'MultipleChoice' %}
             <div class="form-group">
               <label for="multiple_type">Select your choice: </label>
-              <select class="form-select" id="FormControlSelect1" name="multiple_type" id="tracker_option" required>
+              <select class="form-select" id="FormControlSelect1" name="multiple_type" id="tracker_option" required value="{{ log_data['selected_choice'] }}">
                   {% for data in multiple_data %}
                   <option value="{{ data }}">{{ data }}</option>
                   {% endfor %}
@@ -45,13 +45,13 @@
 
           <div class="form-group">
               <label for="desc">Notes: </label>
-              <input type="text" class="form-control" id="FormControlInput1" name="notes" placeholder="Enter notes here...">
+              <input type="text" class="form-control" id="FormControlInput1" name="notes" placeholder="Enter notes here..." value="{{ log_data['notes'] }}">
           </div>
 
           {% endif %}
           <div class="form-group">
             <label for="desc">Value: </label>
-            <input type="text" class="form-control" id="FormControlTextarea1" name="lvalue" placeholder="Enter value here...">
+            <input type="text" class="form-control" id="FormControlTextarea1" name="lvalue" placeholder="Enter value here..." value="{{ log_data['value'] }}">
           </div>
           <div id="createbtn">
               <button class="button" type="submit">Update Log</button>

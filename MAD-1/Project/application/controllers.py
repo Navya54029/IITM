@@ -98,7 +98,7 @@ def dashboard(user_id):
                     dates.append(last_created_log.created_date)
                 else:
                     dates.append(last_tracked.modified_date)
-                # .strftime("%a %d %b %Y, %H:%M:%S %p")
+                
             # this append date of tracker created if there is no log added to tracker
             else:
                 last_tracked = tracker['created_date']
@@ -154,6 +154,12 @@ def updatetracker(user_id,tracker_id):
 def deletetracker(user_id,tracker_id):
     response = requests.delete(f"http://127.0.0.1:5000/v1/api/deletetracker/{user_id}/{tracker_id}")
     print(response)
+    response=requests.get(f"http://127.0.0.1:5000/v1/api/log_data/{user_id}/{tracker_id}")
+    log_data=json.loads(response.text)
+
+    for log in log_data:
+        response = requests.delete(f"http://127.0.0.1:5000/v1/api/deletelog/{user_id}/{tracker_id}/{log['log_id']}")
+        print(response)
     return redirect(url_for("dashboard",user_id=user_id))
 
 
@@ -175,9 +181,10 @@ def logevent(user_id,tracker_id):
     tracker_data = Tracker.query.filter_by(tracker_id=tracker_id).first()
     print(tracker_data.type)
     multiple_data=[]
-    for d in tracker_data.settings.split(","):
-        multiple_data.append(d)
-    
+    if tracker_data.type == "MultipleChoice":
+        
+        for d in tracker_data.settings.split(","):
+            multiple_data.append(d)
     return render_template("logevent.html",user_id=user_id,tracker_id=tracker_id,multiple_data=multiple_data,tracker_data=tracker_data)
 
 @app.route(("/updatelog/<int:user_id>/<int:tracker_id>/<int:log_id>"), methods=['GET', 'POST'])
@@ -202,6 +209,7 @@ def updatelog(user_id,tracker_id,log_id):
     multiple_data=[]
     for d in tracker_data.settings.split(","):
         multiple_data.append(d)
+    print(update_log_data)
     return render_template("updatelog.html",log_data=update_log_data,user_id=user_id,tracker_id=tracker_id,log_id=log_id,tracker_data=tracker_data,multiple_data=multiple_data)
 
 
@@ -227,23 +235,38 @@ def viewtracker(user_id,tracker_id):
         for log in log_data:
             x.append(log["log_time"])
             y.append(int(log["value"]))   
+    
     dict_data={}
-    tuple_data=[]
     if tracker_data.type == 'Numeric':
         for log in log_data:
             x.append(log["notes"])
             y.append(int(log["value"])) 
         
-        tuple_data = list(zip(x, y))
-        
-        for data in tuple_data:
+        for data in list(zip(x, y)):
             if data[0] in dict_data.keys():
                 dict_data[data[0]]+=data[1]
             else:
                 dict_data[data[0]]=data[1]
-        print(dict_data) 
+         
         x=[key for key in dict_data.keys()]
         y=[val for val in dict_data.values()]
+
+
+    if tracker_data.type == 'MultipleChoice':
+        for log in log_data:
+            x.append(log["selected_choice"])
+            y.append(int(log["value"]))
+        # print(list(zip(x,y)))
+        for data in list(zip(x,y)):
+            if data[0] in dict_data.keys():
+                dict_data[data[0]]+=data[1]
+            else:
+                dict_data[data[0]]=data[1]
+        # print(dict_data) 
+        x=[key for key in dict_data.keys()]
+        y=[val for val in dict_data.values()]
+
+
     plt.switch_backend('Agg') 
     plt.figure(figsize=(10, 6))
     plt.tight_layout()

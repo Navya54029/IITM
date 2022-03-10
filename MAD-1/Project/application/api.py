@@ -211,7 +211,6 @@ class TRACKERAPI(Resource):
     def delete(self,tracker_id,user_id):
         print("Inside DELETE")
         deletetracker=Tracker.query.filter_by(user_id=user_id,tracker_id=tracker_id).first()
-        print(deletetracker)
         db.session.delete(deletetracker)
         db.session.commit()
         return 200

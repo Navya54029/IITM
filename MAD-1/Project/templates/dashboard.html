@@ -8,6 +8,9 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
   <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/login.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/dashboard.css') }}">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  
 </head>
 <body>
     <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
@@ -27,6 +30,7 @@
             <b>List of trackers</b><br>
             <b style="text-align: left;">Last Reviewed : {{ user_data['logout_time'] }}</b>
           </div>
+          
         <form action="/dashboard/{{ user_data['user_id'] }}" method="POST">
         <div class="container">
         <table class="table table-striped" id="customtable">
