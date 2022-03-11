@@ -40,9 +40,9 @@ def signup():
         }
         user_json_object = json.dumps(user_dict, indent = 4)
     
-        print(user_json_object)
+        print(user_dict)
         
-        response_res = requests.post("http://127.0.0.1:5000/v1/api/create", json = user_json_object)
+        response_res = requests.post("http://127.0.0.1:5000/v1/api/create", data = user_dict)
         return render_template("login.html")
     return render_template("create.html")
 
@@ -303,8 +303,8 @@ def user_profile(user_id):
 
         user_dict = {
             "user_name" : request.form.get("uname"),
-            "user_pwd" : request.form.get("old"),
-            "user_pwd1" : request.form.get("new"),
+            "user_pwd" : request.form.get("new"),
+            "user_pwd1" : request.form.get("old"),
             "user_cnfmpwd" : request.form.get("new_cnfm"),
             "sec_question" : request.form.get("questions"),
             "sec_answer" : request.form.get("ans")
@@ -313,7 +313,7 @@ def user_profile(user_id):
     
         print(user_json_object)
         
-        user_update = requests.put(f"http://127.0.0.1:5000/v1/api/user/{user_id}", json = user_json_object)
+        user_update = requests.put(f"http://127.0.0.1:5000/v1/api/user/{user_id}", data = user_dict)
        
         return render_template("user_profile_update.html", user_id=user_id)
 
