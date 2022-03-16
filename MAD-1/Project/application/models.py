@@ -12,7 +12,9 @@ class User(db.Model):
     sec_answer = db.Column(db.String, nullable = False)
     created_date = db.Column(db.String)
     modified_date = db.Column(db.String)
-    logout_time = db.Column(db.String)  
+    logout_time = db.Column(db.String) 
+    trackers = db.relationship("Tracker", backref="User") 
+    logs = db.relationship("Logs", backref="User") 
 
 class Tracker(db.Model):
     __tablename__ = 'tracker_master'
@@ -25,7 +27,7 @@ class Tracker(db.Model):
     created_date = db.Column(db.String)
     modified_date = db.Column(db.String)
     user_id = db.Column(db.Integer,   db.ForeignKey("user_master.user_id"), primary_key=True, nullable=False)
-    trackers = db.relationship("User", secondary="relation_master")
+    # trackers = db.relationship("User", secondary="relation_master")
 
 class Relations(db.Model):
     __tablename__ = 'relation_master'
@@ -46,5 +48,5 @@ class Logs(db.Model):
     user_id = db.Column(db.Integer,   db.ForeignKey("user_master.user_id"), primary_key=True, nullable=False)
     tracker_id = db.Column(db.Integer,  db.ForeignKey("tracker_master.tracker_id"), primary_key=True, nullable=False) 
     # users = db.relationship("User", secondary="relation_master",overlaps="trackers")
-    trackers = db.relationship("Tracker", secondary="relation_master",overlaps="trackers")
+    # trackers = db.relationship("Tracker", secondary="relation_master",overlaps="trackers")
 

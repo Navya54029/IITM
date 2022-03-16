@@ -1,22 +1,24 @@
-from ast import Return
-from calendar import month
-from crypt import methods
-from multiprocessing import Value
-from turtle import color
-from flask import Flask, redirect, request,url_for
-from flask import render_template
+# from ast import Return
+# from calendar import month
+# from crypt import methods
+# from multiprocessing import Value
+# from turtle import color
+from flask import Flask, redirect, request,url_for,render_template,flash
 from flask import current_app as app
 from platformdirs import user_data_dir
 from application.models import *
 from application.api import *
-import urllib.request, json
-import datetime
+from application.details import *
+# import urllib.request, json
+# import datetime
 from datetime import datetime
 import requests
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import desc
-from datetime import datetime
+# from datetime import datetime
 import matplotlib.pyplot as plt
+from werkzeug.security import generate_password_hash, check_password_hash
+
 
 
 @app.route("/", methods=["GET"])
@@ -29,7 +31,7 @@ def signup():
 
     if request.method == "POST":
     
-        created_date= datetime.now()
+        # created_date= datetime.now()
         user_dict = {
             "user_name" : request.form.get("uname"),
             "user_email" : request.form.get("uemail"),
@@ -38,10 +40,36 @@ def signup():
             "sec_question" : request.form.get("questions"),
             "sec_answer" : request.form.get("ans")
         }
-        user_json_object = json.dumps(user_dict, indent = 4)
-    
-        print(user_dict)
+
+        user_email = User.query.filter_by(user_email=user_dict['user_email']).first()
+        user_name = User.query.filter_by(user_name=user_dict['user_name']).first()
         
+        #To check password and confirm passwords match and alert user
+        if user_dict['user_pwd'] != user_dict['user_cnfmpwd']:
+            flash('Passwords doesn\'t Match', category='error')
+            return redirect(url_for('signup'))
+        
+        #To check email is valid or not
+        if '@' not in user_dict['user_email']:
+            flash('Email is not valid', category='error')
+            return redirect(url_for('signup'))
+
+        if user_dict['user_name'].isnumeric():
+            flash('User name should not be numeric', category='error')
+            return redirect(url_for('signup'))
+        
+        #To check if already user name exists
+        if user_name:
+            flash('Username already exists')
+            return redirect(url_for('signup'))
+        #To check if already user email exists
+        if user_email:
+            flash('Email address already exists')
+            return redirect(url_for('signup'))
+        
+        #To hash the password and save it in DB
+        user_dict['user_pwd'] = generate_password_hash(user_dict['user_pwd'], method='sha256')
+        #To create new user
         response_res = requests.post("http://127.0.0.1:5000/v1/api/create", data = user_dict)
         return render_template("login.html")
     return render_template("create.html")
@@ -55,13 +83,15 @@ def login():
         
         user_name = request.form.get("uname")
         user_pwd = request.form.get("psw")
-        stmt = db.session.query(User).filter_by(user_name= user_name).first()
-        # print(stmt.user_pwd,stmt.user_name)
-        if (user_pwd == stmt.user_pwd and user_name == stmt.user_name):
-            print("here")
-            return redirect(url_for("dashboard",user_id=stmt.user_id))
-        else:
-            return render_template("login.html")
+
+        user = User.query.filter_by(user_name=user_name).first()
+
+        # check if the user actually exists
+        # take the user-supplied password, hash it, and compare it to the hashed password in the database
+        if not user or not check_password_hash(user.user_pwd, user_pwd):
+            flash('Please check your login details and try again.')
+            return redirect(url_for('login')) 
+        return redirect(url_for("dashboard",user_id=user.user_id))
         
     return render_template("login.html")
 
@@ -77,36 +107,45 @@ def logout(user_id):
 
 @app.route("/dashboard/<int:user_id>", methods=['GET', 'POST'])
 def dashboard(user_id):
-
+    
         response=requests.get(f"http://127.0.0.1:5000/v1/api/dashboard/{user_id}")
         user_data=json.loads(response.text)
         user_data['logout_time']=user_data['logout_time']
-        response=requests.get(f"http://127.0.0.1:5000//v1/api/user_trackers/{user_id}")
-        user_tracker_details=json.loads(response.text)
-        
-        #Dates on Dashboard
-        dates=[]
-        for tracker in user_tracker_details:
-            islog=Logs.query.filter_by(tracker_id=tracker['tracker_id']).first()
-            #To check if atleast one log is present for a tracker
-            if islog:
-                last_tracked = Logs.query.filter_by(tracker_id=tracker['tracker_id']).order_by(desc('modified_date')).first()
-                # To check if the log has any modified date, if not it will show the last created date of the log
-                if last_tracked.modified_date is None:
-                    print(last_tracked.created_date)
-                    last_created_log =  Logs.query.filter_by(tracker_id=tracker['tracker_id']).order_by(desc('created_date')).first()
-                    dates.append(last_created_log.created_date)
+        responsetrackers=requests.get(f"http://127.0.0.1:5000//v1/api/user_trackers/{user_id}")
+        # print(responsetrackers.status_code)
+        if responsetrackers.status_code == 404:
+            print("Inside if")
+            return render_template("dashboard.html",user_data=user_data)
+        else:
+            user_tracker_details=json.loads(responsetrackers.text)
+            
+            #Dates on Dashboard
+            dates=[]
+            # if noof_user_trackers > 1:
+            for tracker in user_tracker_details:
+                # print(tracker)
+                islog=Logs.query.filter_by(tracker_id=tracker['tracker_id']).first()
+                print(islog)
+                #To check if atleast one log is present for a tracker
+                if islog is not None:
+                    print("inside is log")
+                    last_tracked = Logs.query.filter_by(tracker_id=tracker['tracker_id']).order_by(desc('modified_date')).first()
+                    # To check if the log has any modified date, if not it will show the last created date of the log
+                    if last_tracked.modified_date is None:
+                        print(last_tracked.created_date)
+                        last_created_log =  Logs.query.filter_by(tracker_id=tracker['tracker_id']).order_by(desc('created_date')).first()
+                        dates.append(last_created_log.created_date)
+                    else:
+                        dates.append(last_tracked.modified_date)
+                    
+                # this append date of tracker created if there is no log added to tracker
                 else:
-                    dates.append(last_tracked.modified_date)
-                
-            # this append date of tracker created if there is no log added to tracker
-            else:
-                last_tracked = tracker['created_date']
-                print(type(last_tracked))
-                dates.append(last_tracked)
-        # print(dates)
-        return render_template("dashboard.html",user_data=user_data,user_tracker_details=user_tracker_details,last_tracked=dates)
-
+                    last_tracked = tracker['created_date']
+                    # print(type(last_tracked))
+                    dates.append(last_tracked)
+                # print(dates)
+            return render_template("dashboard.html",user_data=user_data,user_tracker_details=user_tracker_details,last_tracked=dates)
+            
             
 
 @app.route(("/addtracker/<int:user_id>"), methods=['GET', 'POST'])
@@ -197,7 +236,9 @@ def updatelog(user_id,tracker_id,log_id):
         "selected_choice" : request.form.get("multiple_type")
     }
     # print(update_dict)
+    
     if request.method == "POST":
+        update_dict['log_time'] = datetime.strptime(update_dict["log_time"], '%Y-%m-%dT%H:%M')
         response = requests.put(f"http://127.0.0.1:5000/v1/api/update_log_data/{user_id}/{tracker_id}/{log_id}",data=update_dict)
         print(response.text)
         return redirect(url_for("viewtracker",user_id=user_id,tracker_id=tracker_id))
@@ -223,68 +264,75 @@ def deletelog(user_id,tracker_id,log_id):
 def viewtracker(user_id,tracker_id):
 
     response=requests.get(f"http://127.0.0.1:5000/v1/api/log_data/{user_id}/{tracker_id}")
-    log_data=json.loads(response.text)
-    last_tracked = Logs.query.order_by(desc('modified_date')).first()
-    # print(last_tracked.modified_date)
-    # print(log_data)
+    print(response.status_code)
     tracker_data = Tracker.query.filter_by(tracker_id=tracker_id).first()
-    print(tracker_data.type)
-    x=[]
-    y=[]
-    if tracker_data.type == 'Timestamp':
-        for log in log_data:
-            x.append(log["log_time"])
-            y.append(int(log["value"]))   
-    
-    dict_data={}
-    if tracker_data.type == 'Numeric':
-        for log in log_data:
-            x.append(log["notes"])
-            y.append(int(log["value"])) 
+    islog=Logs.query.filter_by(tracker_id=tracker_id).count()
+    if response.status_code==404:
         
-        for data in list(zip(x, y)):
-            if data[0] in dict_data.keys():
-                dict_data[data[0]]+=data[1]
-            else:
-                dict_data[data[0]]=data[1]
-         
-        x=[key for key in dict_data.keys()]
-        y=[val for val in dict_data.values()]
-
-
-    if tracker_data.type == 'MultipleChoice':
-        for log in log_data:
-            x.append(log["selected_choice"])
-            y.append(int(log["value"]))
-        # print(list(zip(x,y)))
-        for data in list(zip(x,y)):
-            if data[0] in dict_data.keys():
-                dict_data[data[0]]+=data[1]
-            else:
-                dict_data[data[0]]=data[1]
-        # print(dict_data) 
-        x=[key for key in dict_data.keys()]
-        y=[val for val in dict_data.values()]
-
-
-    plt.switch_backend('Agg') 
-    plt.figure(figsize=(10, 6))
-    plt.tight_layout()
-
-    if tracker_data.chart_type == 'bar':
-        plt.title("Barchart of your logs")
-        plt.bar(x,height=y,color='mediumaquamarine',width=0.3)
+        return render_template("tracker.html",user_id=user_id,tracker_id=tracker_id,tracker_data=tracker_data,islog=islog)
     else:
-        plt.title("Trendline of your logs")
-        plt.plot(x,y,c='mediumaquamarine',linewidth = '5.5',marker = 'o')
+        log_data=json.loads(response.text)
+        last_tracked = Logs.query.order_by(desc('modified_date')).first()
+        # print(last_tracked.modified_date)
         
-    plt.xlabel('Notes')
-    plt.ylabel('Values')
-    plt.xticks(x, rotation=12)
-    plt.savefig('static/img/logplot.png',dpi=70,bbox_inches="tight")
-    plt.clf()  
+        tracker_data = Tracker.query.filter_by(tracker_id=tracker_id).first()
+        print(tracker_data.type)
+        x=[]
+        y=[]
+        if tracker_data.type == 'Timestamp':
+            for log in log_data:
+                x.append(log["log_time"])
+                y.append(int(log["value"]))   
+        
+        dict_data={}
+        if tracker_data.type == 'Numeric':
+            for log in log_data:
+                x.append(log["notes"])
+                y.append(int(log["value"])) 
+            
+            for data in list(zip(x, y)):
+                if data[0] in dict_data.keys():
+                    dict_data[data[0]]+=data[1]
+                else:
+                    dict_data[data[0]]=data[1]
+            
+            x=[key for key in dict_data.keys()]
+            y=[val for val in dict_data.values()]
 
-    return render_template("tracker.html",user_id=user_id,log_data=log_data,tracker_id=tracker_id,last_tracked=last_tracked.modified_date,tracker_data=tracker_data)
+
+        if tracker_data.type == 'MultipleChoice':
+            for log in log_data:
+                x.append(log["selected_choice"])
+                y.append(int(log["value"]))
+            # print(list(zip(x,y)))
+            for data in list(zip(x,y)):
+                if data[0] in dict_data.keys():
+                    dict_data[data[0]]+=data[1]
+                else:
+                    dict_data[data[0]]=data[1]
+            # print(dict_data) 
+            x=[key for key in dict_data.keys()]
+            y=[val for val in dict_data.values()]
+
+
+        plt.switch_backend('Agg') 
+        plt.figure(figsize=(10, 6))
+        plt.tight_layout()
+
+        if tracker_data.chart_type == 'bar':
+            plt.title("Barchart of your logs")
+            plt.bar(x,height=y,color='mediumaquamarine',width=0.3)
+        else:
+            plt.title("Trendline of your logs")
+            plt.plot(x,y,c='mediumaquamarine',linewidth = '5.5',marker = 'o')
+            
+        plt.xlabel('Notes')
+        plt.ylabel('Values')
+        plt.xticks(x, rotation=12)
+        plt.savefig('static/img/logplot.png',dpi=70,bbox_inches="tight")
+        plt.clf()  
+
+    return render_template("tracker.html",user_id=user_id,log_data=log_data,tracker_id=tracker_id,last_tracked=last_tracked.modified_date,tracker_data=tracker_data,islog=islog)
 
 
 
@@ -302,7 +350,6 @@ def user_profile(user_id):
     if request.method == "POST":
 
         user_dict = {
-            "user_name" : request.form.get("uname"),
             "user_pwd" : request.form.get("new"),
             "user_pwd1" : request.form.get("old"),
             "user_cnfmpwd" : request.form.get("new_cnfm"),

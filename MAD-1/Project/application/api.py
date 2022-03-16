@@ -165,7 +165,6 @@ class USERCREATEAPI(Resource):
         print("Inside Put")
         args = create_user_parser.parse_args()
         user_dict = {
-            "user_name" : args.get("user_name",None),
             "user_pwd" : args.get("user_pwd",None),
             "user_cnfmpwd" : args.get("user_cnfmpwd", None),
             "sec_question" : args.get("sec_question",None),
@@ -173,23 +172,12 @@ class USERCREATEAPI(Resource):
         }
         # print(user_dict)
 
-         # for validating an Email
-        regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
-        # To return error responses based on user input
-        if user_dict["user_name"] is None or user_dict["user_name"].isnumeric():
-            raise BusinessValidationError(status_code=400,error_code="USER001",error_message="Username is required and should be String")
-              
         if user_dict["user_pwd"] is None or user_dict["sec_question"] is None or user_dict["sec_answer"] is None:
             raise BusinessValidationError(status_code=400,error_code="USER003",error_message="Password, Security Question and Answer are required")
 
-        usernameexists = db.session.query(User).filter(User.user_name == user_dict["user_name"]).first()
-        
-        if usernameexists:
-            raise UserExistError(status_code=409)
-        # print(user_dict)
         
         modified_date= datetime.datetime.now()
-        edituser = User.query.filter_by(user_id=user_id).update(dict(user_name = user_dict["user_name"], user_pwd = user_dict["user_pwd"], cnfrm_pwd= user_dict["user_cnfmpwd"],sec_question = user_dict["sec_question"],sec_answer = user_dict["sec_answer"], modified_date = modified_date))
+        edituser = User.query.filter_by(user_id=user_id).update(dict(user_pwd = user_dict["user_pwd"], cnfrm_pwd= user_dict["user_cnfmpwd"],sec_question = user_dict["sec_question"],sec_answer = user_dict["sec_answer"], modified_date = modified_date))
         # edituser1 = User(user_id= user_id,user_name = user_dict["user_name"], user_email=user_dict["user_email"],user_pwd = user_dict["user_pwd"], cnfrm_pwd= user_dict["user_cnfmpwd"],sec_question = user_dict["sec_question"],sec_answer = user_dict["sec_answer"], modified_date = modified_date)
         edituser1 = User.query.filter_by(user_id=user_id).first()
         print(edituser1)
@@ -222,7 +210,7 @@ class TRACKERAPI(Resource):
     @marshal_with(tracker_output_fields)
     def get(self,user_id):
         user_tracker_details = Tracker.query.filter_by(user_id=user_id).all()
-        print(user_tracker_details)
+        # print(user_tracker_details)
         if user_tracker_details == []:
             raise TrackerNotFoundError(status_code = 404)
         return user_tracker_details,200
@@ -247,9 +235,9 @@ class TRACKERAPI(Resource):
             raise BusinessValidationError(status_code=400,error_code="TRACKER003",error_message="Chart Type is required and should be one in [plot,bar]")
         
         tnameexists = Tracker.query.filter_by(user_id=user_id).first()
-        
-        if tnameexists.name == add_dict["tname"]:
-            raise TrackerExistError(status_code=409)
+        if tnameexists is not None:
+            if tnameexists.name == add_dict["tname"]:
+                raise TrackerExistError(status_code=409)
 
 
         created_date=datetime.datetime.now()
@@ -312,11 +300,14 @@ class LOGAPI(Resource):
         print("Inside POST")
         print(user_id,tracker_id)
         args = create_log_parser.parse_args()
-        
+        print(args)
         if args.get("log_time") is None:
             raise BusinessValidationError(status_code=400,error_code="LOG001",error_message="Log Time is required")
-        if args.get("notes") is None:
-            raise BusinessValidationError(status_code=400,error_code="LOG002",error_message="Notes is required")
+        user_tracker_details = Tracker.query.filter_by(user_id=user_id,tracker_id=tracker_id).first()
+        # print(user_tracker_details.type)
+        if user_tracker_details.type != 'MultipleChoice':
+            if args.get("notes") is None:
+                raise BusinessValidationError(status_code=400,error_code="LOG002",error_message="Notes is required")
         if args.get("value") is None:
             raise BusinessValidationError(status_code=400,error_code="LOG003",error_message="Value is required")
 
@@ -356,8 +347,12 @@ class UPDATEGETAPI(Resource):
             raise LogNotFoundError(status_code=404)
         if args.get("log_time") is None:
             raise BusinessValidationError(status_code=400,error_code="LOG001",error_message="Log Time is required")
-        if args.get("notes") is None:
-            raise BusinessValidationError(status_code=400,error_code="LOG002",error_message="Notes is required")
+
+        user_tracker_details = Tracker.query.filter_by(user_id=user_id,tracker_id=tracker_id).first()
+        # print(user_tracker_details.type)
+        if user_tracker_details.type != 'MultipleChoice':
+            if args.get("notes") is None:
+                raise BusinessValidationError(status_code=400,error_code="LOG002",error_message="Notes is required")
         if args.get("value") is None:
             raise BusinessValidationError(status_code=400,error_code="LOG003",error_message="Value is required")
         

@@ -44,14 +44,16 @@
             </tr>
           </thead>
           <tbody id="tablebody">
-            {% for tracker in user_tracker_details %}
-            <tr>
-              <th scope="row">{{ loop.index }}</th>
-              <td><a href="/userlogs/{{ user_data['user_id'] }}/{{ user_tracker_details[loop.index-1]['tracker_id'] }}">{{ user_tracker_details[loop.index-1]['name'] }}</a></td>
-              <td>{{ last_tracked[loop.index-1] }}</td>
-              <td><a href="/logevent/{{ user_data['user_id'] }}/{{ user_tracker_details[loop.index-1]['tracker_id'] }}">+</a></td>
-              <td><a href="/updatetracker/{{ user_data['user_id'] }}/{{ user_tracker_details[loop.index-1]['tracker_id'] }}">Edit</a>&nbsp;&nbsp;&nbsp;<a href="/deletetracker/{{ user_data['user_id'] }}/{{ user_tracker_details[loop.index-1]['tracker_id'] }}">Delete</a></td>
-            {% endfor %}
+            
+              {% for tracker in user_tracker_details %}
+              <tr>
+                <th scope="row">{{ loop.index }}</th>
+                <td><a href="/userlogs/{{ user_data['user_id'] }}/{{ user_tracker_details[loop.index-1]['tracker_id'] }}">{{ user_tracker_details[loop.index-1]['name'] }}</a></td>
+                <td>{{ last_tracked[loop.index-1] }}</td>
+                <td><a href="/logevent/{{ user_data['user_id'] }}/{{ user_tracker_details[loop.index-1]['tracker_id'] }}">+</a></td>
+                <td><a href="/updatetracker/{{ user_data['user_id'] }}/{{ user_tracker_details[loop.index-1]['tracker_id'] }}">Edit</a>&nbsp;&nbsp;&nbsp;<a href="/deletetracker/{{ user_data['user_id'] }}/{{ user_tracker_details[loop.index-1]['tracker_id'] }}">Delete</a></td>
+              {% endfor %}
+          
           </tbody>
         </table>
       </form>

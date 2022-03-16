@@ -9,6 +9,7 @@ import logging
 from flask_restful import Resource, Api
 
 
+
 app = None
 
 
@@ -22,8 +23,12 @@ def create_app():
       app.logger.info("Staring Local Development.")
       print("Staring Local Development")
       app.config.from_object(LocalDevelopmentConfig)
+      app.config['SECRET_KEY'] = 'lkjhgasdfg'
     db.init_app(app)
     app.app_context().push()
+
+    # login_manager = LoginManager()
+    # login_manager.init_app(app)
     app.logger.info("App setup complete")
     return app
 

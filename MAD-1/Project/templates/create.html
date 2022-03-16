@@ -20,6 +20,33 @@
           </a>
         </div>
       </nav>
+      {% with messages = get_flashed_messages() %}
+      {% if 'Email address already exists' in messages %}
+          <div class="alert alert-danger" role="alert">
+              {{ messages[0] }}. Go to <a href="{{ url_for('login') }}">Login page</a>.
+          </div>
+          {% endif %}
+          {% if 'Username already exists' in messages %}
+          <div class="alert alert-danger" role="alert">
+              {{ messages[0] }}. Try another Username.
+          </div>
+          {% endif %}
+          {% if 'Passwords doesn\'t Match' in messages %}
+          <div class="alert alert-danger" role="alert">
+              {{ messages[0] }}.
+          </div>
+          {% endif %}
+          {% if 'Email is not valid' in messages %}
+          <div class="alert alert-danger" role="alert">
+              {{ messages[0] }}.
+          </div>
+          {% endif %}
+          {% if 'User name should not be numeric' in messages %}
+          <div class="alert alert-danger" role="alert">
+              {{ messages[0] }}.
+          </div>
+          {% endif %}
+      {% endwith %}
       <form action="/create" method=POST>
         <div>
           <h2>

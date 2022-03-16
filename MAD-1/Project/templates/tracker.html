@@ -35,10 +35,11 @@
         </select>
     </div>
   </form>
+        {% if islog > 0 %}
         <div class="container" style="max-width: 100%; padding: auto;">
           <img src="/static/img/logplot.png" alt="No preview available" style="max-width: 100%; max-height: 100%;">
         </div>
-
+        {% endif %}
       <div id="user" class="row" class="container">
         <h3></h3>
         <h4 style="text-align: center; padding-top: 1px; font-weight: bolder; text-decoration: underline;">List of Logs</h4>
