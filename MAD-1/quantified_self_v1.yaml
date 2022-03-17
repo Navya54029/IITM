@@ -1,0 +1,1002 @@
+openapi: 3.0.0
+info:
+  title: Quantified Self
+  description: >
+    <div>
+    A simple API for the Final Project
+    </div>
+
+    <h3> User Table Schema </h3> 
+    <table>
+      <thead>
+        <th>Column Name</th>
+        <th>Column Type</th>
+        <th>Constraints</th>
+      </thead>
+      <tbody>
+      <tr>
+        <td>user_id</td>
+        <td>Integer</td>
+        <td>Primary Key, Auto Increment</td>
+      </tr>
+      <tr>
+        <td>user_name</td>
+        <td>String</td>
+        <td>Unique, Not Null</td>
+      </tr>
+      <tr>
+        <td>user_email</td>
+        <td>String</td>
+        <td>Unique, Not Null</td>
+      </tr>      
+      <tr>
+        <td>user_pwd</td>
+        <td>String</td>
+        <td>Not Null</td>
+      </tr> 
+        <tr>
+        <td>cnfrm_pwd</td>
+        <td>String</td>
+        <td>Not Null</td>
+      </tr>  
+      <tr>
+      <td>sec_answer</td>
+      <td>String</td>
+      <td>Not Null</td>
+      </tr>
+      <tr>
+      <td>created_date</td>
+      <td>String</td>
+      <td></td>
+      </tr>
+      <tr>
+      <td>modified_date</td>
+      <td>String</td>
+      <td></td>
+      </tr>
+      <tr>
+      <td>logout_time</td>
+      <td>String</td>
+      <td></td>
+      </tr>
+    </tbody>
+    </table>
+
+    <h3> Tracker Table Schema </h3> 
+    <table>
+      <thead>
+        <th>Column Name</th>
+        <th>Column Type</th>
+        <th>Constraints</th>
+      </thead>
+      <tbody>
+      <tr>
+        <td>tracker_id</td>
+        <td>Integer</td>
+        <td>Primary Key, Auto Increment</td>
+      </tr>
+      <tr>
+        <td>name</td>
+        <td>String</td>
+        <td>Not Null</td>
+      </tr>
+      <tr>
+        <td>description</td>
+        <td>String</td>
+        <td>Not Null</td>
+      </tr>      
+      <tr>
+        <td>type</td>
+        <td>String</td>
+        <td>Not Null</td>
+      </tr>
+      <tr>
+        <td>settings</td>
+        <td>String</td>
+        <td></td>
+      </tr> 
+       <tr>
+        <td>chart_type</td>
+        <td>String</td>
+        <td></td>
+      </tr>
+       <tr>
+        <td>created_date</td>
+        <td>String</td>
+        <td></td>
+      </tr>
+       <tr>
+        <td>modified_date</td>
+        <td>String</td>
+        <td></td>
+      </tr>
+       <tr>
+        <td>user_id</td>
+        <td>Integer</td>
+        <td>Primary Key, Auto Increment</td>
+      </tr>
+    </tbody>
+    </table>
+
+
+    <h3> Logs Table Schema </h3> 
+    <table>
+      <thead>
+        <th>Column Name</th>
+        <th>Column Type</th>
+        <th>Constraints</th>
+      </thead>
+      <tbody>
+      <tr>
+        <td>log_id</td>
+        <td>Integer</td>
+        <td>Primary Key, Auto Increment</td>
+      </tr>
+      <tr>
+        <td>log_time</td>
+        <td>String</td>
+        <td>Not Null</td>
+      </tr>
+      <tr>
+        <td>value</td>
+        <td>String</td>
+        <td>Not Null</td>
+      </tr>      
+      <tr>
+        <td>notes</td>
+        <td>String</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>created_date</td>
+        <td>String</td>
+        <td></td>
+      </tr> 
+       <tr>
+        <td>modified_date</td>
+        <td>String</td>
+        <td></td>
+      </tr>
+       <tr>
+        <td>selected_choice</td>
+        <td>String</td>
+        <td></td>
+      </tr>
+       <tr>
+        <td>tracker_id</td>
+        <td>Integer</td>
+        <td>Primary Key, Auto Increment</td>
+      </tr>
+       <tr>
+        <td>user_id</td>
+        <td>Integer</td>
+        <td>Primary Key, Auto Increment</td>
+      </tr>
+    </tbody>
+    </table>
+
+    <h3> Error Codes </h3> 
+    <table>
+      <thead>
+        <th>Resource</th>
+        <th>Error Code</th>
+        <th>Message</th>
+      </thead>
+      <tbody>
+      <tr>
+        <td>Tracker</td>
+        <td>TRACKER001</td>
+        <td>Tracker Name is required and should be String.</td>
+      </tr>
+      <tr>
+        <td>Tracker</td>
+        <td>TRACKER002</td>
+        <td>Tracker Type is required and should be one in [MultipleChoice,Numeric,Timestamp].</td>
+      </tr>
+      <tr>
+        <td>Tracker</td>
+        <td>TRACKER003</td>
+        <td> Chart Type is required and should be one in [plot,bar].</td>
+      </tr>
+      <tr>
+        <td>User</td>
+        <td>USER001</td>
+        <td>Username is required and should be String </td>
+      </tr>
+      <tr>
+        <td>User</td>
+        <td>USER002</td>
+        <td>Email is required and should be valid </td>
+      </tr>
+      <tr>
+        <td>User</td>
+        <td>USER003</td>
+        <td>Password, Security Question and Answer are required </td>
+      </tr>
+      <tr>
+        <td>Log</td>
+        <td>LOG001</td>
+        <td>Log Time is required</td>
+      </tr>
+      <tr>
+        <td>Log</td>
+        <td>LOG002</td>
+        <td>Notes is required.</td>
+      </tr>  
+      <tr>
+        <td>Log</td>
+        <td>LOG003</td>
+        <td>Value is required.</td>
+      </tr> 
+    </tbody>
+    </table>
+
+  version: 1.0.0
+servers:
+  - url: http://127.0.0.1:5000/
+paths:
+  /v1/api/user/{user_id}:
+    description: Url to read, update and delete the student resource.
+    get:
+      description: Operation to read user
+      parameters:
+        - in: path
+          name: user_id
+          required: true
+          schema:
+            type: integer
+            example: 201
+      responses:
+        '200':
+          description: Request Successful
+          content:
+            application/json:
+              schema:
+                title: user object
+                type: object
+                properties:
+                  user_id:
+                    type: integer
+                    example: 30
+                  user_name:
+                    type: string
+                    example: Mani71
+                  user_email:
+                    type: string
+                    example: Mani7@gmail.com
+                  sec_question:
+                    type: string
+                    example: book
+                  sec_answer:
+                    type: string
+                    example: Davinci
+                  created_date:
+                    type: string
+                    example: "2022-03-02 20:37:42.852665"
+        '500':
+          description: Internal server error
+        '404':
+          description: User not found
+
+    put:
+      description: Operation to update the user details
+      parameters:
+        - in: path
+          name: user_id
+          required: true
+          schema:
+            type: integer
+            example: 101
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              
+              properties:
+                user_id:
+                  type: integer
+                  example: 32
+                user_pwd:
+                  type: string
+                  example: MANA123
+                user_cnfmpwd:
+                  type: string
+                  example: MANA123
+                sec_question:
+                  type: string
+                  example: book
+                sec_answer:
+                  type: string
+                  example: Davinci
+      responses:
+        '200':
+          description: Successfully updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user_id:
+                    type: integer
+                    example: 30
+                  user_name:
+                    type: string
+                    example: Mani71
+                  user_email:
+                    type: string
+                    example: Mani7@gmail.com
+                  sec_question:
+                    type: string
+                    example: book
+                  sec_answer:
+                    type: string
+                    example: Davinci
+                  created_date:
+                    type: string
+                    example: "2022-03-02 20:37:42.852665"
+                  modified_date:
+                    type: string
+                    example: "2022-03-11 17:48:23.783569"
+                  logout_time:
+                    type: string
+                    example: "2022-03-11 00:18:18.108259"
+        '404':
+          description: User not found
+        '500':
+          description: Internal Server Error
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_code:
+                    type: string
+                  error_message:
+                    type: string
+
+  /v1/api/create:
+    description: Url to create User
+    post:
+      description: Operation to create the User
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_name:
+                  type: string
+                  example: Narendra
+                user_email:
+                  type: string
+                  example: Mishra@gmail.com
+                user_pwd:
+                  type: string
+                  example: MANA123
+                user_cnfmpwd:
+                  type: string
+                  example: MANA123
+                sec_question:
+                  type: string
+                  example: book
+                sec_answer:
+                  type: string
+                  example: Davinci
+      responses:
+        '201':
+          description: Successfully Created
+          content:
+            application/json:
+              schema:
+                title: user object
+                type: object
+                properties:
+                  user_id:
+                    type: integer
+                    example: 32
+                  user_name:
+                    type: string
+                    example: Narendra
+                  user_email:
+                    type: string
+                    example: Mishra@gmail.com
+                  user_pwd:
+                    type: string
+                    example: MANA123
+                  user_cnfmpwd:
+                    type: string
+                    example: MANA123
+                  sec_question:
+                    type: string
+                    example: book
+                  sec_answer:
+                    type: string
+                    example: Davinci
+        '409':
+          description: User already exist
+        '500':
+          description: Internal Server Error
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_code:
+                    type: string
+                  error_message:
+                    type: string
+                    
+  /v1/api/logout/{user_id}:
+    description: End point to Logout the User
+    get:
+      description: Operation to logout the user
+      parameters:
+        - in: path
+          name: user_id
+          required: true
+          schema:
+            type: integer
+            example: 201
+      responses:
+        '200':
+          description: Logged out Successfully
+        '404':
+          description: User not found
+        '500':
+          description: Internal Server Error
+  /v1/api/dashboard/{user_id}:
+    description: End point to get all the details of user
+    get:
+      description: Operation to Read user details.
+      parameters:
+        - in: path
+          name: user_id
+          required: true
+          schema:
+            type: integer
+            example: 201
+      responses:
+        '200':
+          description: Request Successful
+          content:
+            application/json:
+              schema:
+                title: user object
+                type: object
+                properties:
+                  user_id:
+                    type: integer
+                    example: 30
+                  user_name:
+                    type: string
+                    example: Mani71
+                  user_email:
+                    type: string
+                    example: Mani7@gmail.com
+                  sec_question:
+                    type: string
+                    example: book
+                  sec_answer:
+                    type: string
+                    example: Davinci
+                  created_date:
+                    type: string
+                    example: "2022-03-02 20:37:42.852665"
+                  modified_date:
+                    type: string
+                    example: "2022-03-11 17:48:23.783569"
+                  logout_time:
+                    type: string
+                    example: "2022-03-11 00:18:18.108259"
+        '500':
+          description: Internal Server Error
+        '404':
+          description: User Not Found
+  /v1/api/user_trackers/{user_id}:
+    description: End point to get the details of Tracker of a user
+    get:
+      description: Operation to get the details of Tracker of a user
+      parameters:
+        - in: path
+          name: user_id
+          required: true
+          schema:
+            type: integer
+            example: 201
+      responses:
+        '201':
+          description: Successfully Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user_id:
+                    type: integer
+                    example: 201
+                  tracker_id:
+                    type: integer
+                    example: 20
+                  name:
+                    type: string
+                    example: Income12
+                  tracker_type:
+                    type: string
+                    example: MultipleChoice
+                  chart_type:
+                    type: string
+                    example: plot
+                  settings:
+                    type: string
+                    example: A,B,C 
+                  created_date:
+                    type: string
+                    example: "2022-03-11 18:14:36.653476"
+                  modified_date:
+                    type: string
+                    example: null
+        '404':
+          description: Tracker Not Found
+        '500':
+          description: Internal Server Error
+
+  /v1/api/addtracker/{user_id}:
+    description: End point to create Tracker for User
+    post:
+      description: Operation to create the Tracker for user
+      parameters:
+        - in: path
+          name: user_id
+          required: true
+          schema:
+            type: integer
+            example: 201
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Income12
+                description:
+                  type: string
+                  example: My income12 tracking
+                tracker_type:
+                  type: string
+                  example: MultipleChoice
+                chart_type:
+                  type: string
+                  example: plot
+                settings:
+                  type: string
+                  example: commaseparated values 
+                
+      responses:
+        '201':
+          description: Successfully Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user_id:
+                    type: integer
+                    example: 201
+                  tracker_id:
+                    type: integer
+                    example: 20
+                  name:
+                    type: string
+                    example: Income12
+                  tracker_type:
+                    type: string
+                    example: MultipleChoice
+                  chart_type:
+                    type: string
+                    example: plot
+                  settings:
+                    type: string
+                    example: A,B,C 
+                  created_date:
+                    type: string
+                    example: "2022-03-11 18:14:36.653476"
+                  modified_date:
+                    type: string
+                    example: null
+        '409':
+          description: Tracker already exist
+        '404':
+          description: Tracker Not Found
+        '500':
+          description: Internal Server Error
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_code:
+                    type: string
+                  error_message:
+                    type: string
+  /v1/api/updatetracker/{user_id}/{tracker_id}:
+    put:
+      description: Operation to update the tracker of the user.
+      parameters:
+        - in: path
+          name: user_id
+          required: true
+          schema:
+            type: integer
+            example: 201
+        - in: path
+          name: tracker_id
+          required: true
+          schema:
+            type: integer
+            example: 201
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                  name:
+                    type: string
+                    example: Income12
+                  description:
+                    type: string
+                    example: My Description
+                  chart_type:
+                    type: string
+                    example: plot
+                  settings:
+                    type: string
+                    example: A,B,C
+      responses:
+        '200':
+          description: Successfuly updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user_id:
+                    type: integer
+                    example: 201
+                  tracker_id:
+                    type: integer
+                    example: 20
+                  name:
+                    type: string
+                    example: Income12
+                  tracker_type:
+                    type: string
+                    example: MultipleChoice
+                  description:
+                    type: string
+                    example: My Description
+                  chart_type:
+                    type: string
+                    example: plot
+                  settings:
+                    type: string
+                    example: A,B,C
+                  modified_date:
+                    type: string
+                    example: "2022-03-11 19:23:33.771467"
+        '409':
+          description: Tracker already exist
+        '404':
+          description: Tracker and User Not found
+        '500':
+          description: Internal Server Error
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_code:
+                    type: string
+                  error_message:
+                    type: string
+                
+  /v1/api/deletetracker/{user_id}/{tracker_id}:
+    delete:
+      description: Operation to delete the tracker of the user
+      parameters:
+        - in: path
+          name: user_id
+          required: true
+          schema:
+            type: integer
+            example: 201
+        - in: path
+          name: tracker_id
+          required: true
+          schema:
+            type: integer
+            example: 201
+      responses:
+        '200':
+          description: Successfully Deleted
+        '404':
+          description: Tracker not found
+        '500':
+          description: Intenal Server Error
+
+  /v1/api/loganewevent/{user_id}/{tracker_id}:
+    description: End point to create a log for tracker
+    post:
+      description: Operation to create a log for tracker
+      parameters:
+        - in: path
+          name: user_id
+          required: true
+          schema:
+            type: integer
+            example: 201
+        - in: path
+          name: tracker_id
+          required: true
+          schema:
+            type: integer
+            example: 201
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                log_time:
+                  type: string
+                  example: "2022-03-10 00:36:00"
+                value:
+                  type: string
+                  example: 67
+                notes:
+                  type: string
+                  example: Test notes
+                selected_choice:
+                  type: string
+                  example: Null
+      responses:
+        '201':
+          description: Successfully Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user_id:
+                    type: integer
+                    example: 201
+                  tracker_id:
+                    type: integer
+                    example: 201
+                  log_id:
+                    type: integer
+                    example: 201
+                  log_time:
+                    type: string
+                    example: "2022-03-10 00:36:00"
+                  value:
+                    type: string
+                    example: 67
+                  notes:
+                    type: string
+                    example: Test notes
+                  selected_choice:
+                    type: string
+                    example: Null
+                  created_date:
+                    type: string
+                    example: "2022-03-11 19:52:58.665701"
+                  modified_date:
+                    type: string
+                    example: null
+        '500':
+          description: Internal Server Error
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_code:
+                    type: string
+                  error_message:
+                    type: string
+
+  /v1/api/log_data/{user_id}/{tracker_id}:
+    description: Url to get the the list of logs a user with user_id has for a tracker tracker_id.
+    get:
+      description: Url to get the the list of logs a user with user_id has for a tracker tracker_id.
+      parameters:
+        - in: path
+          name: user_id
+          required: true
+          schema:
+            type: integer
+            example: 101
+        - in: path
+          name: tracker_id
+          required: true
+          schema:
+            type: integer
+            example: 101
+      responses:
+        '200':
+          description: Request Successful
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties:
+                    user_id:
+                      type: integer
+                      example: 201
+                    tracker_id:
+                      type: integer
+                      example: 201
+                    log_id:
+                      type: integer
+                      example: 201
+                    log_time:
+                      type: string
+                      example: "2022-03-10 00:36:00"
+                    value:
+                      type: string
+                      example: 67
+                    notes:
+                      type: string
+                      example: Test notes
+                    selected_choice:
+                      type: string
+                      example: Null
+                    created_date:
+                      type: string
+                      example: "2022-03-11 19:52:58.665701"
+                    modified_date:
+                      type: string
+                      example: null
+        '404':
+          description: User has not logged for the tracker
+        '500':
+          description: Internal Server Error
+  
+  /v1/api/update_log_data/{user_id}/{tracker_id}/{log_id}:
+    description: Update a log in a user tracker
+    put:
+      description: Update a log in a user tracker
+      parameters:
+        - in: path
+          name: user_id
+          required: true
+          schema:
+            type: integer
+            example: 101
+        - in: path
+          name: tracker_id
+          required: true
+          schema:
+            type: integer
+            example: 101
+        - in: path
+          name: log_id
+          required: true
+          schema:
+            type: integer
+            example: 101
+            
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                log_time:
+                  type: string
+                  example: "2022-03-03 00:38:00"
+                value:
+                  type: string
+                  example: 67
+                notes:
+                  type: string
+                  example: Test notes
+                selected_choice:
+                  type: string
+                  example: Null
+      responses:
+        '201':
+          description: Updating Log is successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user_id:
+                    type: integer
+                    example: 201
+                  tracker_id:
+                    type: integer
+                    example: 201
+                  log_id:
+                    type: integer
+                    example: 201
+                  log_time:
+                    type: string
+                    example: "2022-03-03 00:38:00"
+                  value:
+                    type: string
+                    example: 67
+                  notes:
+                    type: string
+                    example: Test notes
+                  selected_choice:
+                    type: string
+                    example: Null
+                  created_date:
+                    type: string
+                    example: "2022-03-11 19:52:58.665701"
+                  modified_date:
+                    type: string
+                    example: "2022-03-11 20:26:40.474920"
+        '404':
+          description: Log not found
+        '500':
+          description: Internal Server Error
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error_code:
+                    type: string
+                  error_message:
+                    type: string
+
+  /v1/api/deletelog/{user_id}/{tracker_id}/{log_id}:
+    description: URL to delete log of user tracker
+    delete:
+      description: URL to delete log of user tracker
+      parameters:
+        - in: path
+          name: user_id
+          required: true
+          schema:
+            type: integer
+            example: 101
+        - in: path
+          name: tracker_id
+          required: true
+          schema:
+            type: integer
+            example: 101
+        - in: path
+          name: log_id
+          required: true
+          schema:
+            type: integer
+            example: 101
+      responses:
+        '200':
+          description: Successfully deleted
+        '404':
+          description: Log for the user tracker not found
+        '500':
+          description: Internal Server Error

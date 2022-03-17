@@ -239,6 +239,7 @@ def logevent(user_id,tracker_id):
             return redirect(url_for('logevent',user_id=user_id,tracker_id=tracker_id))
         
         add_log_dict["log_time"]=datetime.strptime(add_log_dict["log_time"], '%Y-%m-%dT%H:%M')
+        print(add_log_dict["log_time"])
         response= requests.post(f"http://127.0.0.1:5000/v1/api/loganewevent/{user_id}/{tracker_id}",data=add_log_dict)
         return redirect(url_for("viewtracker",user_id=user_id,tracker_id=tracker_id,name=current_user.user_name))
     

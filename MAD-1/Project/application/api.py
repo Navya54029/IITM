@@ -166,8 +166,10 @@ class USERCREATEAPI(Resource):
             "sec_question" : args.get("sec_question",None),
             "sec_answer" : args.get("sec_answer",None)
         }
-        # print(user_dict)
-
+        print(user_dict)
+        user = User.query.filter_by(user_id=user_id).first()
+        if not user:
+            raise UserNotFoundError(status_code = 404)
         if user_dict["user_pwd"] is None or user_dict["sec_question"] is None or user_dict["sec_answer"] is None:
             raise BusinessValidationError(status_code=400,error_code="USER003",error_message="Password, Security Question and Answer are required")
 
@@ -186,7 +188,8 @@ class LOGOUTUSERAPI(Resource):
         logout_time = datetime.datetime.now()
         print(type(logout_time))
         user=User.query.filter_by(user_id=user_id).update(dict(logout_time = logout_time))
-        if user is None:
+        user1 = User.query.filter_by(user_id=user_id).first()
+        if not user1:
             raise UserNotFoundError(status_code = 404)
         db.session.commit()
         return 200
@@ -229,6 +232,10 @@ class TRACKERAPI(Resource):
         if add_dict["chart_type"] is None or add_dict["chart_type"] not in ["plot","bar"]:
             raise BusinessValidationError(status_code=400,error_code="TRACKER003",error_message="Chart Type is required and should be one in [plot,bar]")
         
+        user1 = User.query.filter_by(user_id=user_id).first()
+        if not user1:
+            raise UserNotFoundError(status_code = 404)
+
         tnameexists = Tracker.query.filter_by(user_id=user_id).first()
         if tnameexists is not None:
             if tnameexists.name == add_dict["tname"]:
@@ -246,15 +253,18 @@ class TRACKERAPI(Resource):
     def put(self,tracker_id,user_id):
         print("Inside PUT")
         print(user_id,tracker_id)
+        user1 = Tracker.query.filter_by(user_id=user_id,tracker_id=tracker_id).first()
+        if not user1:
+            raise UserNotFoundError(status_code = 404)
         args = create_tracker_parser.parse_args()
-
+        print(args)
         updatetracker=db.session.query(Tracker).filter_by(tracker_id=tracker_id).first()
         updatetracker.name=args.get("name",None)
         updatetracker.description=args.get("description",None)
         updatetracker.settings=args.get("settings",None)
         updatetracker.chart_type =args.get("chart_type", None)
         updatetracker.modified_date=datetime.datetime.now()
-
+    
         if updatetracker.name is None or updatetracker.name.isnumeric():
             raise BusinessValidationError(status_code=400,error_code="TRACKER001",error_message="Tracker Name is required and should be String")
         if updatetracker.chart_type is None or updatetracker.chart_type not in ["plot","bar"]:
@@ -293,6 +303,10 @@ class LOGAPI(Resource):
         print(user_id,tracker_id)
         args = create_log_parser.parse_args()
         print(args)
+        user1 = Tracker.query.filter_by(user_id=user_id,tracker_id=tracker_id).first()
+        if not user1:
+            raise UserNotFoundError(status_code = 404)
+
         if args.get("log_time") is None:
             raise BusinessValidationError(status_code=400,error_code="LOG001",error_message="Log Time is required")
         user_tracker_details = Tracker.query.filter_by(user_id=user_id,tracker_id=tracker_id).first()
@@ -302,7 +316,6 @@ class LOGAPI(Resource):
                 raise BusinessValidationError(status_code=400,error_code="LOG002",error_message="Notes is required")
         if args.get("value") is None:
             raise BusinessValidationError(status_code=400,error_code="LOG003",error_message="Value is required")
-
         created_date=datetime.datetime.now()
         newlog = Logs(log_time= args.get("log_time",None),value= args.get("value",None),notes= args.get("notes",None),user_id=user_id,tracker_id=tracker_id,created_date=created_date,selected_choice = args.get("selected_choice"))
         db.session.add(newlog)
