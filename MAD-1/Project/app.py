@@ -2,16 +2,15 @@
 
 import os
 from flask import Flask
-from application import config
+# from application import config
 from application.config import LocalDevelopmentConfig
 from application.database import db
-import logging
-from flask_restful import Resource, Api
-
-
+# import logging
+# from flask_restful import Resource, Api
+from flask_login import LoginManager
+from application.models import User
 
 app = None
-
 
 
 def create_app():
@@ -27,8 +26,15 @@ def create_app():
     db.init_app(app)
     app.app_context().push()
 
-    # login_manager = LoginManager()
-    # login_manager.init_app(app)
+    login_manager = LoginManager()
+    login_manager.login_view = 'application.login'
+    login_manager.init_app(app)
+
+    @login_manager.user_loader
+    def load_user(user_id):
+        print(user_id)
+        # since the user_id is just the primary key of our user table, use it in the query for the user
+        return User.query.get(int(user_id))
     app.logger.info("App setup complete")
     return app
 

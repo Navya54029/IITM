@@ -15,17 +15,31 @@
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav" style="text-align: left;">
           <a class="nav-item nav-link" style="color: cornsilk; margin-left: 60rem;" href="/create">Signup</a>
-          <a class="nav-item nav-link" style="color: cornsilk" href="/contact.html">Contact Us</a>
+          <a class="nav-item nav-link" style="color: cornsilk" href="/aboutus">About Us</a>
         </div>
       </div>
       </nav>
       {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        <div class="alert alert-danger" role="alert">
-            {{ messages[0] }}
-        </div>
-      {% endif %}
-      {% endwith %}
+        {% if 'User added successfully' in messages %}
+            <div class="alert alert-success" role="alert">
+                {{ messages[0] }}.
+            </div>
+          {% endif %}
+        {% endwith %}
+        {% with messages = get_flashed_messages() %}
+        {% if 'Old Password is incorrect.' in messages %}
+            <div class="alert alert-danger" role="alert">
+                {{ messages[0] }}
+            </div>
+          {% endif %}
+        {% endwith %}
+        {% with messages = get_flashed_messages() %}
+        {% if 'Passwords doesn\'t match.' in messages %}
+            <div class="alert alert-danger" role="alert">
+                {{ messages[0] }}
+            </div>
+          {% endif %}
+        {% endwith %}
       <form action="/login" method="POST">
         <div>
             <h2>

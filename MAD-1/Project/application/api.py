@@ -1,13 +1,9 @@
 from flask_sqlalchemy import SQLAlchemy
-from jinja2 import Template
-from flask_restful import Resource, Api
+from flask_restful import Resource, Api,marshal_with,fields,reqparse
 from flask_restful import *
-from flask_restful import marshal_with,fields,reqparse
-from matplotlib.cbook import print_cycles
-from pkg_resources import get_distribution
 from werkzeug.exceptions import HTTPException
 from application.models import *
-import json
+# import json
 from app import *
 from .database import db
 import datetime
@@ -19,30 +15,30 @@ import re
 
 api = Api(app)
 
-
-
-
 #Defining output fields using marshal_with
 user_output_fields = {
 	"user_id" : fields.Integer,
 	"user_name" : fields.String,
 	"user_email" : fields.String,
-	"sec_question" : fields.String,
-    "sec_answer" : fields.String,
-    "created_date" : fields.String
-}
-
-#Defining output fields using marshal_with
-user_dashboard_output_fields = {
-	"user_id" : fields.Integer,
-	"user_name" : fields.String,
-	"user_email" : fields.String,
+    "user_pwd" : fields.String,
 	"sec_question" : fields.String,
     "sec_answer" : fields.String,
     "created_date" : fields.String,
     "modified_date" : fields.String,
     "logout_time" : fields.String
 }
+
+# #Defining output fields using marshal_with
+# user_dashboard_output_fields = {
+# 	"user_id" : fields.Integer,
+# 	"user_name" : fields.String,
+# 	"user_email" : fields.String,
+# 	"sec_question" : fields.String,
+#     "sec_answer" : fields.String,
+#     "created_date" : fields.String,
+#     "modified_date" : fields.String,
+#     "logout_time" : fields.String
+# }
 
 #Defining output fields using marshal_with
 update_tracker_output_fields = {
@@ -140,7 +136,7 @@ class USERCREATEAPI(Resource):
             raise UserExistError(status_code=409)
         # print(user_dict)
         created_date= datetime.datetime.now()
-        newuser = User(user_name = user_dict["user_name"], user_email = user_dict["user_email"], user_pwd = user_dict["user_pwd"], cnfrm_pwd= user_dict["user_cnfmpwd"],sec_question = user_dict["sec_question"],sec_answer = user_dict["sec_answer"], created_date = created_date)
+        newuser = User(user_name = user_dict["user_name"], user_email = user_dict["user_email"], user_pwd = user_dict["user_pwd"],sec_question = user_dict["sec_question"],sec_answer = user_dict["sec_answer"], created_date = created_date)
     
         db.session.add(newuser)
         db.session.commit()
@@ -160,7 +156,7 @@ class USERCREATEAPI(Resource):
             raise UserNotFoundError(status_code = 404)
 
 
-    @marshal_with(user_dashboard_output_fields)
+    @marshal_with(user_output_fields)
     def put(self,user_id):
         print("Inside Put")
         args = create_user_parser.parse_args()
@@ -177,10 +173,9 @@ class USERCREATEAPI(Resource):
 
         
         modified_date= datetime.datetime.now()
-        edituser = User.query.filter_by(user_id=user_id).update(dict(user_pwd = user_dict["user_pwd"], cnfrm_pwd= user_dict["user_cnfmpwd"],sec_question = user_dict["sec_question"],sec_answer = user_dict["sec_answer"], modified_date = modified_date))
-        # edituser1 = User(user_id= user_id,user_name = user_dict["user_name"], user_email=user_dict["user_email"],user_pwd = user_dict["user_pwd"], cnfrm_pwd= user_dict["user_cnfmpwd"],sec_question = user_dict["sec_question"],sec_answer = user_dict["sec_answer"], modified_date = modified_date)
+        edituser = User.query.filter_by(user_id=user_id).update(dict(user_pwd = user_dict["user_pwd"],sec_question = user_dict["sec_question"],sec_answer = user_dict["sec_answer"], modified_date = modified_date))
         edituser1 = User.query.filter_by(user_id=user_id).first()
-        print(edituser1)
+        # print(edituser1)
         db.session.commit()
         return edituser1,200
 
@@ -198,7 +193,7 @@ class LOGOUTUSERAPI(Resource):
 
 class DASHBOARDAPI(Resource):
     
-    @marshal_with(user_dashboard_output_fields)
+    @marshal_with(user_output_fields)
     def get(self,user_id):
         user_details = User.query.filter_by(user_id=user_id).first()
         if user_details is None:
@@ -252,10 +247,7 @@ class TRACKERAPI(Resource):
         print("Inside PUT")
         print(user_id,tracker_id)
         args = create_tracker_parser.parse_args()
-        tnameexists = Tracker.query.filter_by(user_id=user_id).all()
-        for t in tnameexists:
-            if t.name == args.get("name",None):
-                raise TrackerExistError(status_code=409)
+
         updatetracker=db.session.query(Tracker).filter_by(tracker_id=tracker_id).first()
         updatetracker.name=args.get("name",None)
         updatetracker.description=args.get("description",None)

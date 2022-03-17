@@ -16,9 +16,15 @@
       <label id="app_name">Quantified Self</label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
         <div class="navbar-nav" style="text-align: left;">
+          {% if current_user.is_authenticated %}
           <a class="nav-item nav-link active" style="color: cornsilk; margin-left: 55rem;" href="/dashboard/{{ user_id }}">Dashboard<span class="sr-only"></span></a>
+          {% endif %}
+          {% if current_user.is_authenticated %}
           <a class="nav-item nav-link" style="color: cornsilk" href="/profile/{{ user_id }}">My Profile</a>
+          {% endif %}
+          {% if current_user.is_authenticated %}
           <a class="nav-item nav-link" style="color: cornsilk" href="/logout/{{ user_id }}">Logout</a>
+          {% endif %}
         </div>
       </div>
     </nav>
