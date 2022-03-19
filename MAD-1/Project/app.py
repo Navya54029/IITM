@@ -7,6 +7,7 @@ from application.database import db
 from flask_login import LoginManager
 from application.models import User
 
+
 app = None
 
 
@@ -26,7 +27,14 @@ def create_app():
     login_manager = LoginManager()
     login_manager.login_view = 'application.login'
     login_manager.init_app(app)
-
+    login_manager.login_view = "login"
+    login_manager.login_message = u"Please Login to view this page"
+    login_manager.login_message_category = "info"
+    login_manager.refresh_view = "accounts.reauthenticate"
+    login_manager.needs_refresh_message = (u"To protect your account, please reauthenticate to access this page.")
+    login_manager.needs_refresh_message_category = "info"
+    login_manager.session_protection = "strong"
+  
     @login_manager.user_loader
     def load_user(user_id):
         print(user_id)
