@@ -42,7 +42,8 @@ class Tracker(db.Model):
 class Logs(db.Model):
     __tablename__ = 'log_master'
     log_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    log_time = db.Column(db.String, nullable = False) 
+    log_time = db.Column(db.String, nullable = False)
+    log_time1 = db.Column(db.String) 
     value = db.Column(db.String, nullable = False)
     notes = db.Column(db.String)
     created_date = db.Column(db.String)

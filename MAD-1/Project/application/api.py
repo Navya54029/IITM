@@ -97,6 +97,7 @@ create_tracker_parser.add_argument('settings',type=str)
 #To read values from create log request Body
 create_log_parser = reqparse.RequestParser()
 create_log_parser.add_argument('log_time')
+create_log_parser.add_argument('log_time1')
 create_log_parser.add_argument('value')
 create_log_parser.add_argument('notes',type=str)
 create_log_parser.add_argument('selected_choice',type=str)
@@ -302,7 +303,7 @@ class LOGAPI(Resource):
         print("Inside POST")
         print(user_id,tracker_id)
         args = create_log_parser.parse_args()
-        print(args)
+        print(args,"here")
         user1 = Tracker.query.filter_by(user_id=user_id,tracker_id=tracker_id).first()
         if not user1:
             raise UserNotFoundError(status_code = 404)

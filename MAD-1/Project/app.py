@@ -2,11 +2,8 @@
 
 import os
 from flask import Flask
-# from application import config
 from application.config import LocalDevelopmentConfig
 from application.database import db
-# import logging
-# from flask_restful import Resource, Api
 from flask_login import LoginManager
 from application.models import User
 

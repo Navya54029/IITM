@@ -223,11 +223,12 @@ def logevent(user_id,tracker_id):
 
         add_log_dict = {
                 "log_time" : request.form.get("ltime"),
+                # "log_time1" : request.form.get("ltime1"),
                 "value" : request.form.get("lvalue"),
                 "notes" : request.form.get("notes"),
                 "selected_choice" : request.form.get("multiple_type")
             }
-        print(add_log_dict)
+        # print(add_log_dict)
         def isfloat(num):
             try:
                 float(num)
@@ -239,7 +240,10 @@ def logevent(user_id,tracker_id):
             return redirect(url_for('logevent',user_id=user_id,tracker_id=tracker_id))
         
         add_log_dict["log_time"]=datetime.strptime(add_log_dict["log_time"], '%Y-%m-%dT%H:%M')
-        print(add_log_dict["log_time"])
+        # add_log_dict["log_time1"]=datetime.strptime(add_log_dict["log_time1"], '%Y-%m-%dT%H:%M')
+        # add_log_dict["value"]=add_log_dict["log_time1"] - add_log_dict["log_time"]
+        
+        # print(add_log_dict["log_time1"])
         response= requests.post(f"http://127.0.0.1:5000/v1/api/loganewevent/{user_id}/{tracker_id}",data=add_log_dict)
         return redirect(url_for("viewtracker",user_id=user_id,tracker_id=tracker_id,name=current_user.user_name))
     
@@ -319,11 +323,18 @@ def viewtracker(user_id,tracker_id):
         # print(tracker_data.type)
         x=[]
         y=[]
+        z=[]
         if tracker_data.type == 'Timestamp':
             for log in log_data:
                 x.append(log["log_time"])
-                y.append(float(log["value"]))   
-        
+                y.append(float(log["value"]))
+                # y.append(log["notes"])
+                # plt.switch_backend('Agg')
+                # fig = plt.figure()
+                # ax = fig.add_subplot(111)
+                # z.append(log["notes"])
+                # print(z) 
+                                        
         dict_data={}
         if tracker_data.type == 'Numeric':
             for log in log_data:
@@ -365,7 +376,6 @@ def viewtracker(user_id,tracker_id):
         else:
             plt.title("Trendline of your logs")
             plt.plot(x,y,c='mediumaquamarine',linewidth = '5.5',marker = 'o')
-            
         plt.xlabel('Notes')
         plt.ylabel('Values')
         plt.xticks(x, rotation=12)
