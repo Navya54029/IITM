@@ -100,7 +100,7 @@ def dashboard(user_id):
     
         response=requests.get(f"http://127.0.0.1:5000/v1/api/dashboard/{user_id}")
         user_data=json.loads(response.text)
-        user_data['logout_time']=user_data['logout_time']
+        user_data['logout_time']=user_data['logout_time'].split('.')[0]
         responsetrackers=requests.get(f"http://127.0.0.1:5000//v1/api/user_trackers/{user_id}")
         # print(responsetrackers.status_code)
         if responsetrackers.status_code == 404:
@@ -124,15 +124,15 @@ def dashboard(user_id):
                     if last_tracked.modified_date is None:
                         # print(last_tracked.created_date)
                         last_created_log =  Logs.query.filter_by(tracker_id=tracker['tracker_id']).order_by(desc('created_date')).first()
-                        dates.append(last_created_log.created_date)
+                        dates.append(last_created_log.created_date.split('.')[0])
                     else:
-                        dates.append(last_tracked.modified_date)
+                        dates.append(last_tracked.modified_date.split('.')[0])
                     
                 # this append date of tracker created if there is no log added to tracker
                 else:
                     last_tracked = tracker['created_date']
                     # print(type(last_tracked))
-                    dates.append(last_tracked)
+                    dates.append(last_tracked.split('.')[0])
                 # print(dates)
             print(current_user.user_name)
             return render_template("dashboard.html",user_data=user_data,user_tracker_details=user_tracker_details,last_tracked=dates,name=current_user.user_name)
@@ -323,7 +323,7 @@ def viewtracker(user_id,tracker_id):
         # print(tracker_data.type)
         x=[]
         y=[]
-        z=[]
+        # z=[]
         if tracker_data.type == 'Timestamp':
             for log in log_data:
                 x.append(log["log_time"])
@@ -382,7 +382,7 @@ def viewtracker(user_id,tracker_id):
         plt.savefig('static/img/logplot.png',dpi=70,bbox_inches="tight")
         plt.clf()  
 
-    return render_template("tracker.html",user_id=user_id,log_data=log_data,tracker_id=tracker_id,last_tracked=last_tracked.modified_date,tracker_data=tracker_data,islog=islog,name=current_user.user_name)
+    return render_template("tracker.html",user_id=user_id,log_data=log_data,tracker_id=tracker_id,last_tracked=last_tracked.modified_date.split('.')[0],tracker_data=tracker_data,islog=islog,name=current_user.user_name)
 
 
 
