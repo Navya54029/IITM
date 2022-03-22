@@ -15,7 +15,7 @@
 
 # Folder Structure
 
-- `app.py` has the code for initializing and running the application.
+- `app.py/(main.py in replit)` has the code for initializing and running the application.
 - `local_setup.sh` has the script for setting up the local environment.
 - `local_run.sh` has the script for running the application.
 - `db_directory` folder has quantified_self1.sqlite3 database file.
