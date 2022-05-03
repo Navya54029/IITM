@@ -87,3 +87,7 @@
     |__ updatetracker.html
     |__ aboutus.html
 ```
+
+
+Here is the link for the deployed version of the Project  i.e., Quantified Self App
+https://quantified-self-app.ladinavya.repl.co/
